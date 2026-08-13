@@ -153,9 +153,6 @@ body.is-mobile .mobile-only{display:block}
 .card.egg{background:linear-gradient(140deg,#3FA37A,#2C7F63);color:#fff}
 .card.egg h3{font-family:var(--f-display);font-size:21px;font-weight:900;line-height:1.45}
 .card.egg p{font-size:15px;line-height:1.75;color:#D8F2E7;margin-top:8px}
-.card.egg2{background:linear-gradient(140deg,#7A5FBF,#54399B);color:#fff}
-.card.egg2 h3{font-family:var(--f-display);font-size:21px;font-weight:900;line-height:1.45}
-.card.egg2 p{font-size:15px;line-height:1.75;color:#E2D9F5;margin-top:8px}
 
 /* 撿到的東西：精簡標籤列 */
 .mine-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
@@ -304,11 +301,6 @@ body.is-mobile .mobile-only{display:block}
     <div class="card egg" id="eggCard" hidden>
       <h3>你觀察力超強，根本是來賞鳥的</h3>
       <p id="eggBody"></p>
-    </div>
-
-    <div class="card egg2" id="eggGuy" hidden>
-      <h3 id="eggGuyHead">你發現岸上那個人會說話</h3>
-      <p id="eggGuyBody"></p>
     </div>
 
     <div class="card punch">
@@ -1154,17 +1146,8 @@ function showResult(){
   if(egg)document.getElementById('eggBody').textContent=
     '你點到魚、螃蟹和白鷺鷥共 '+animalTaps+' 次，比撿起來的垃圾還多。你觀察力超強，根本是賞鳥大師，但旁邊很多垃圾，有沒有考慮撿一下？';
 
-  const guyCard=document.getElementById('eggGuy');
-  guyCard.hidden=!eggG;
-  if(eggG){
-    const all=heardCount>=LINES.length;
-    document.getElementById('eggGuyHead').textContent=
-      all?'你把他的藉口聽完了':'你發現岸上那個人會說話';
-    document.getElementById('eggGuyBody').textContent=
-      '你戳了他 '+guyTaps+' 次，聽到 '+heardCount+' 種說法'+
-      (all?'——六種藉口全被你挖出來了。':'（總共有 '+LINES.length+' 種）。')+
-      '「不然咧」「我等一下會撿」「就一個而已」，這些話聽起來耳熟，是因為它們真的每天都在河邊發生。';
-  }
+  // 小人彩蛋卡片：不在結果頁顯示給玩家，但 guyTaps / heardCount / eggG
+  // 還是照常計算，稍後一樣會送進 track('game_end', ...) 給後台統計。
 
   const grid=document.getElementById('mineGrid');
   const got=Object.keys(ALL).filter(k=>picked[k]>0).sort((a,b)=>picked[b]-picked[a]);
