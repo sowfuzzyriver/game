@@ -10,7 +10,7 @@
 <meta property="og:locale" content="zh_TW">
 <meta property="og:title" content="60 秒筏子溪淨溪挑戰">
 <meta property="og:description" content="垃圾正順著水流漂走。手指點下去，就把它撿起來，看你能救回多少。">
-<meta property="og:url" content=" https://sowfuzzyriver.github.io/game/">
+<meta property="og:url" content="https://sowfuzzyriver.github.io/game/">
 <meta property="og:image" content="https://sowfuzzyriver.github.io/game/share-card.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -1045,7 +1045,7 @@ function endPlay(){
 }
 /* ---- 產生成績分享圖（畫在離線畫布上，供手機原生分享附圖） ---- */
 function makeShareImage(mine,missedCount,cb){
-  const w=1080,h=1080,c=document.createElement('canvas');
+  const w=1080,h=1200,c=document.createElement('canvas');
   c.width=w;c.height=h;const g=c.getContext('2d');
   // 底：溪水漸層
   const bg=g.createLinearGradient(0,0,0,h);
@@ -1078,8 +1078,30 @@ function makeShareImage(mine,missedCount,cb){
   g.fillText(String(mine),w/2,930);
   g.fillStyle='#123A33';g.font='700 40px "Noto Sans TC",sans-serif';
   g.fillText('我撿起了 '+mine+' 件垃圾',w/2,985);
-  g.fillStyle='#3E6B62';g.font='400 32px "Noto Sans TC",sans-serif';
-  g.fillText('漏掉 '+missedCount+' 件　換你來挑戰',w/2,1032);
+  g.fillStyle='#3E6B62';g.font='400 30px "Noto Sans TC",sans-serif';
+  g.fillText('漏掉 '+missedCount+' 件',w/2,1024);
+
+  // 網址膠囊：畫進圖片本身，不管分享到哪個 App 都不會漏掉
+  // 中文和網址用不同字型分開畫，避免單一字型缺字變成方框
+  const zhLabel='換你來挑戰：',urlOnly=GAME_URL.replace(/^https?:\/\//,'').replace(/\/$/,'');
+  const fZh='700 30px "Noto Sans TC",sans-serif',fUrl='700 30px "Space Mono",monospace';
+  g.font=fZh;const zhW=g.measureText(zhLabel).width;
+  g.font=fUrl;const urlW=g.measureText(urlOnly).width;
+  const gapPad=2,padX=28,capW=zhW+urlW+gapPad+padX*2,capH=64;
+  const capX=(w-capW)/2,capY=1060,r=capH/2;
+  g.fillStyle='#1E7F8C';
+  g.beginPath();
+  g.moveTo(capX+r,capY);g.lineTo(capX+capW-r,capY);
+  g.arc(capX+capW-r,capY+r,r,-Math.PI/2,Math.PI/2);
+  g.lineTo(capX+r,capY+capH);
+  g.arc(capX+r,capY+r,r,Math.PI/2,-Math.PI/2);
+  g.fill();
+  g.textAlign='left';g.textBaseline='middle';g.fillStyle='#FFFFFF';
+  let tx=capX+padX;
+  g.font=fZh;g.fillText(zhLabel,tx,capY+r+1);tx+=zhW+gapPad;
+  g.font=fUrl;g.fillText(urlOnly,tx,capY+r+1);
+  g.textAlign='center';g.textBaseline='alphabetic';
+
   c.toBlob(function(b){cb(b);},'image/png');
 }
 
