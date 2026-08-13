@@ -119,6 +119,8 @@ canvas{display:block;width:100%;height:100%;touch-action:none;-webkit-touch-call
 .btn.ghost{background:#fff;color:var(--ink2);border:1.5px solid var(--line);
   font-size:15px;padding:14px;box-shadow:none}
 .btn+.btn{margin-top:8px}
+.btn-row{display:flex;gap:8px;margin-top:8px}
+.btn-row .btn{margin-top:0;flex:1;font-size:14.5px;padding:14px 8px;line-height:1.35}
 
 /* ---- 結算 ---- */
 .res-top{text-align:center;padding-top:2px}
@@ -186,9 +188,6 @@ canvas{display:block;width:100%;height:100%;touch-action:none;-webkit-touch-call
 .tally-note b{color:var(--ink);font-weight:700}
 .credit{font-size:11.5px;color:var(--ink3);line-height:1.7;margin-top:18px;text-align:center}
 .cta-wrap{margin-top:22px}
-.desktop-only,.mobile-only{display:none}
-body.is-desktop .desktop-only{display:block}
-body.is-mobile .mobile-only{display:block}
 /* 桌機：剩餘秒數／撿起／有人丟了 那排 HUD 放大 */
 @media (min-width:821px){
   .hud{padding:12px}
@@ -207,6 +206,7 @@ body.is-mobile .mobile-only{display:block}
   .btn{font-size:17.5px}
   .btn.fb{font-size:16px}
   .btn.ghost{font-size:14.5px}
+  .btn-row .btn{font-size:14px;padding:13px 6px}
   .disclaim{font-size:11px}
   .lede,.rule,.disclaim{overflow-wrap:break-word;word-break:break-word}
   .res-kicker{font-size:14px}
@@ -280,8 +280,8 @@ body.is-mobile .mobile-only{display:block}
 
     <div class="spacer"></div>
     <button class="btn" id="btnStart">開始淨溪</button>
-    <div class="disclaim">遊戲情節純屬誇張。真實的筏子溪比較安靜，垃圾比較多。<br>
-      我們會記錄匿名的遊玩統計，幫助改進這個遊戲。不含任何個人資料。</div>
+    <div class="disclaim">遊戲情節純屬好玩，真實的筏子溪比較安靜。<br>
+      我們將紀錄遊玩統計，幫助改善遊戲，不含個人資訊。</div>
   </div>
 
   <!-- 結算 -->
@@ -331,8 +331,10 @@ body.is-mobile .mobile-only{display:block}
     <div class="cta-wrap">
       <button class="btn" id="btnAgain">再玩一次</button>
       <a class="btn fb" id="btnFb" href="https://www.facebook.com/sowfuzzyriver/?locale=zh_TW" target="_blank" rel="noopener">追蹤荒野筏子溪平台</a>
-      <button class="btn ghost mobile-only" id="btnShare">分享我的成績</button>
-      <button class="btn ghost desktop-only" id="btnCopyUrl">複製遊戲網址</button>
+      <div class="btn-row">
+        <button class="btn ghost" id="btnShare">分享我的成績</button>
+        <button class="btn ghost" id="btnInvite">分享給朋友挑戰</button>
+      </div>
     </div>
     <div class="credit">資料來源：荒野筏子溪平台　製圖：荒野保護協會台中分會<br>背景音樂：Cheer up (PSG Version) by Snabisch，CC BY 3.0，取自 OpenGameArt.org<br>這是宣導用小遊戲，真正的淨溪在河邊等你</div>
   </div>
@@ -347,7 +349,7 @@ body.is-mobile .mobile-only{display:block}
    ============================================================ */
 const BGM_URL='bgm.mp3';        // 背景音樂檔網址（留空 = 不放音樂）
 const TRACK_URL='https://script.google.com/macros/s/AKfycbxy6MQiw4QqnHzgJ1MobNjCCtPDOP5nU6NS0WHA1fBC4EKhZqpcUmWhUTN7HIXGMW-J/exec';      // Google Apps Script 網頁應用網址（留空 = 不追蹤）
-const GAME_URL='https://annycyt.github.io/river-game/';  // 遊戲本身的網址，會放進分享文案
+const GAME_URL='https://sowfuzzyriver.github.io/game/';  // 遊戲本身的網址，會放進分享文案
 /* ============================================================ */
 
 const W=400,H=680,DURATION=60;
@@ -1105,7 +1107,11 @@ function makeShareImage(mine,missedCount,cb){
   c.toBlob(function(b){cb(b);},'image/png');
 }
 
-let shareTxt='',shareBody='';
+// 邀請朋友用的遊戲介紹（固定文案，與個人成績無關）
+const inviteText='《60 秒筏子溪淨溪挑戰》\n'+
+  '垃圾正順著水流漂走，手指點下去就把它撿起來，看你能救回多少。\n'+
+  '筏子溪淨溪 210 場、撿回 23.92 公噸，光菸蒂就有 88,279 支。\n'+
+  '撿是末端，源頭減量與重複使用才是解方。';
 function showResult(){
   state='result';document.body.classList.remove('playing');audioBtns.hidden=true;
   best=Math.max(best,mine);
@@ -1152,11 +1158,6 @@ function showResult(){
     setTimeout(()=>el.style.width=el.dataset.w+'%',80+i*55)));
 
 
-  shareBody='我在《60 秒筏子溪淨溪挑戰》撿了 '+mine+' 件垃圾，漏掉 '+missedCount+' 件。\n'+
-    '換你來挑戰：'+GAME_URL+'\n'+
-    '#荒野保護協會台中分會 #筏子溪 #淨溪 #源頭減量';
-  shareTxt=shareBody;   // 複製到剪貼簿與原生分享共用同一份文字
-
   const byType={};Object.keys(picked).forEach(k=>{if(picked[k])byType[ALL[k].name]=picked[k];});
   track('game_end',{picked:mine,missed:missedCount,thrown:theirs,
     animal_taps:animalTaps,easter_egg:egg?1:0,best:best,
@@ -1181,24 +1182,38 @@ document.getElementById('btnShare').addEventListener('click',async function(){
     if(blob&&navigator.canShare){
       const file=new File([blob],'淨溪挑戰成績.png',{type:'image/png'});
       if(navigator.canShare({files:[file]})){
-        await navigator.share({title:'60 秒筏子溪淨溪挑戰',text:shareBody,files:[file]});
+        // 只給圖，不帶文字：網址已經畫在圖裡了
+        await navigator.share({files:[file]});
         b.textContent=orig;return;
       }
     }
-    if(navigator.share){await navigator.share({title:'60 秒筏子溪淨溪挑戰',text:shareBody});b.textContent=orig;return;}
-    await navigator.clipboard.writeText(shareTxt);
-    b.textContent='已複製成績，貼上就能發文';setTimeout(()=>b.textContent=orig,2200);
+    // 不支援圖片分享時，退而下載成績圖讓玩家自己貼
+    if(blob){
+      const url=URL.createObjectURL(blob),a=document.createElement('a');
+      a.href=url;a.download='淨溪挑戰成績.png';a.click();
+      setTimeout(()=>URL.revokeObjectURL(url),4000);
+      b.textContent='成績圖已下載 ✓';setTimeout(()=>b.textContent=orig,2400);return;
+    }
+    b.textContent='產生失敗，請再試一次';setTimeout(()=>b.textContent=orig,2200);
   }catch(err){
     if(err&&err.name==='AbortError'){b.textContent=orig;return;}   // 使用者自己取消分享
     b.textContent='分享失敗，請再試一次';setTimeout(()=>b.textContent=orig,2200);
   }
 });
-document.getElementById('btnCopyUrl').addEventListener('click',async function(){
-  const b=this;track('click_copy_url',{});
+document.getElementById('btnInvite').addEventListener('click',async function(){
+  const b=this;track('click_invite',{});
+  const orig='分享給朋友挑戰';
   try{
-    await navigator.clipboard.writeText(GAME_URL);
-    b.textContent='網址已複製 ✓';setTimeout(()=>b.textContent='複製遊戲網址',2200);
-  }catch(err){b.textContent='複製失敗，請手動選取網址';setTimeout(()=>b.textContent='複製遊戲網址',2200);}
+    if(navigator.share){
+      await navigator.share({title:'60 秒筏子溪淨溪挑戰',text:inviteText,url:GAME_URL});
+      b.textContent=orig;return;
+    }
+    await navigator.clipboard.writeText(inviteText+'\n'+GAME_URL);
+    b.textContent='已複製，貼上就能邀請 ✓';setTimeout(()=>b.textContent=orig,2400);
+  }catch(err){
+    if(err&&err.name==='AbortError'){b.textContent=orig;return;}
+    b.textContent='複製失敗，請長按選取';setTimeout(()=>b.textContent=orig,2200);
+  }
 });
 window.addEventListener('pagehide',()=>{
   if(state==='play')track('abandon',{picked:mine,thrown:theirs,
