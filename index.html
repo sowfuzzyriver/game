@@ -121,6 +121,11 @@ canvas{display:block;width:100%;height:100%;touch-action:none;-webkit-touch-call
 .btn+.btn{margin-top:8px}
 .btn-row{display:flex;gap:8px;margin-top:8px}
 .btn-row .btn{margin-top:0;flex:1;font-size:14.5px;padding:14px 8px;line-height:1.35}
+.desktop-only{display:none}
+.mobile-only{display:none}
+body.is-desktop .desktop-only{display:block}
+body.is-mobile .btn-row.mobile-only{display:flex}
+body.is-mobile .mobile-only{display:block}
 
 /* ---- 結算 ---- */
 .res-top{text-align:center;padding-top:2px}
@@ -331,10 +336,11 @@ canvas{display:block;width:100%;height:100%;touch-action:none;-webkit-touch-call
     <div class="cta-wrap">
       <button class="btn" id="btnAgain">再玩一次</button>
       <a class="btn fb" id="btnFb" href="https://www.facebook.com/sowfuzzyriver/?locale=zh_TW" target="_blank" rel="noopener">追蹤荒野筏子溪平台</a>
-      <div class="btn-row">
+      <div class="btn-row mobile-only">
         <button class="btn ghost" id="btnShare">分享我的成績</button>
         <button class="btn ghost" id="btnInvite">分享給朋友挑戰</button>
       </div>
+      <button class="btn ghost desktop-only" id="btnCopyUrl">複製遊戲網址</button>
     </div>
     <div class="credit">資料來源：荒野筏子溪平台　製圖：荒野保護協會台中分會<br>背景音樂：Cheer up (PSG Version) by Snabisch，CC BY 3.0，取自 OpenGameArt.org<br>這是宣導用小遊戲，真正的淨溪在河邊等你</div>
   </div>
@@ -1107,11 +1113,7 @@ function makeShareImage(mine,missedCount,cb){
   c.toBlob(function(b){cb(b);},'image/png');
 }
 
-// 邀請朋友用的遊戲介紹（固定文案，與個人成績無關）
-const inviteText='《60 秒筏子溪淨溪挑戰》\n'+
-  '垃圾正順著水流漂走，手指點下去就把它撿起來，看你能救回多少。\n'+
-  '筏子溪淨溪 210 場、撿回 23.92 公噸，光菸蒂就有 88,279 支。\n'+
-  '撿是末端，源頭減量與重複使用才是解方。';
+let inviteText='';   // 邀請朋友的文字，含這一場成績，於結算時組成
 function showResult(){
   state='result';document.body.classList.remove('playing');audioBtns.hidden=true;
   best=Math.max(best,mine);
@@ -1158,6 +1160,8 @@ function showResult(){
     setTimeout(()=>el.style.width=el.dataset.w+'%',80+i*55)));
 
 
+  inviteText='我在《60 秒筏子溪淨溪挑戰》撿了 '+mine+' 件垃圾，漏掉 '+missedCount+' 件。';
+
   const byType={};Object.keys(picked).forEach(k=>{if(picked[k])byType[ALL[k].name]=picked[k];});
   track('game_end',{picked:mine,missed:missedCount,thrown:theirs,
     animal_taps:animalTaps,easter_egg:egg?1:0,best:best,
@@ -1201,18 +1205,30 @@ document.getElementById('btnShare').addEventListener('click',async function(){
   }
 });
 document.getElementById('btnInvite').addEventListener('click',async function(){
-  const b=this;track('click_invite',{});
+  const b=this;track('click_invite',{picked:mine});
   const orig='分享給朋友挑戰';
+  const full=inviteText+'\n\n換你來挑戰： '+GAME_URL;
   try{
     if(navigator.share){
-      await navigator.share({title:'60 秒筏子溪淨溪挑戰',text:inviteText,url:GAME_URL});
+      // 網址另外放 url 欄位，LINE、FB 才抓得到預覽卡片
+      await navigator.share({title:'60 秒筏子溪淨溪挑戰',text:inviteText+'\n\n換你來挑戰：',url:GAME_URL});
       b.textContent=orig;return;
     }
-    await navigator.clipboard.writeText(inviteText+'\n'+GAME_URL);
+    await navigator.clipboard.writeText(full);
     b.textContent='已複製，貼上就能邀請 ✓';setTimeout(()=>b.textContent=orig,2400);
   }catch(err){
     if(err&&err.name==='AbortError'){b.textContent=orig;return;}
     b.textContent='複製失敗，請長按選取';setTimeout(()=>b.textContent=orig,2200);
+  }
+});
+document.getElementById('btnCopyUrl').addEventListener('click',async function(){
+  const b=this;track('click_copy_url',{});
+  const orig='複製遊戲網址';
+  try{
+    await navigator.clipboard.writeText(GAME_URL);
+    b.textContent='網址已複製 ✓';setTimeout(()=>b.textContent=orig,2200);
+  }catch(err){
+    b.textContent='複製失敗，請手動選取網址';setTimeout(()=>b.textContent=orig,2200);
   }
 });
 window.addEventListener('pagehide',()=>{
