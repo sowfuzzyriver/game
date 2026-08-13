@@ -1160,7 +1160,8 @@ function showResult(){
     setTimeout(()=>el.style.width=el.dataset.w+'%',80+i*55)));
 
 
-  inviteText='我在《60 秒筏子溪淨溪挑戰》撿了 '+mine+' 件垃圾，漏掉 '+missedCount+' 件。';
+  inviteText='我在《60 秒筏子溪淨溪挑戰》撿了 '+mine+' 件垃圾，漏掉 '+missedCount+' 件。\n\n'+
+    '換你來挑戰： '+GAME_URL;
 
   const byType={};Object.keys(picked).forEach(k=>{if(picked[k])byType[ALL[k].name]=picked[k];});
   track('game_end',{picked:mine,missed:missedCount,thrown:theirs,
@@ -1207,14 +1208,13 @@ document.getElementById('btnShare').addEventListener('click',async function(){
 document.getElementById('btnInvite').addEventListener('click',async function(){
   const b=this;track('click_invite',{picked:mine});
   const orig='分享給朋友挑戰';
-  const full=inviteText+'\n\n換你來挑戰： '+GAME_URL;
   try{
+    // 網址寫在文字裡一起送，避免部分 App 只取 text、把 url 欄位丟掉
     if(navigator.share){
-      // 網址另外放 url 欄位，LINE、FB 才抓得到預覽卡片
-      await navigator.share({title:'60 秒筏子溪淨溪挑戰',text:inviteText+'\n\n換你來挑戰：',url:GAME_URL});
+      await navigator.share({text:inviteText});
       b.textContent=orig;return;
     }
-    await navigator.clipboard.writeText(full);
+    await navigator.clipboard.writeText(inviteText);
     b.textContent='已複製，貼上就能邀請 ✓';setTimeout(()=>b.textContent=orig,2400);
   }catch(err){
     if(err&&err.name==='AbortError'){b.textContent=orig;return;}
@@ -1222,11 +1222,11 @@ document.getElementById('btnInvite').addEventListener('click',async function(){
   }
 });
 document.getElementById('btnCopyUrl').addEventListener('click',async function(){
-  const b=this;track('click_copy_url',{});
+  const b=this;track('click_copy_url',{picked:mine});
   const orig='複製遊戲網址';
   try{
-    await navigator.clipboard.writeText(GAME_URL);
-    b.textContent='網址已複製 ✓';setTimeout(()=>b.textContent=orig,2200);
+    await navigator.clipboard.writeText(inviteText);   // 與手機版邀請文字完全相同
+    b.textContent='已複製，貼上就能邀請 ✓';setTimeout(()=>b.textContent=orig,2400);
   }catch(err){
     b.textContent='複製失敗，請手動選取網址';setTimeout(()=>b.textContent=orig,2200);
   }
