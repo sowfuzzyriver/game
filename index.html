@@ -556,10 +556,15 @@ let CITY='',COUNTRY='';
   })();
 })();
 
+let _evtSeq=0;
 function track(event,payload){
   if(!TRACK_URL)return;
   const body=Object.assign({
     event:event,session:SESSION,ts:new Date().toISOString(),
+    // 每筆事件的唯一識別碼：工作階段 + 流水號。
+    // mode:'no-cors' 看不到伺服器回應，瀏覽器有時會自動重送同一個請求，
+    // 造成同一個動作在試算表寫入兩筆。後台靠這個 ID 判斷重複並忽略。
+    eid:SESSION+'-'+(++_evtSeq),
     device:DEVICE,
     region:TZ,
     city:CITY,
@@ -567,11 +572,6 @@ function track(event,payload){
     lang:navigator.language||'',
     ref:(function(){try{return document.referrer||'direct';}catch(e){return'direct';}})()
   },payload||{});
-  // 只用 fetch，不再加上 sendBeacon：
-  // 上次同時使用兩者是因為懷疑 sendBeacon 對 Apps Script 這種「先跳轉再處理」
-  // 的網址不可靠，但實測後發現兩者其實都有送達，變成每個事件重複記錄兩筆。
-  // fetch 搭配 keepalive:true 本來就能在頁面關閉時繼續把請求送完，
-  // 涵蓋了 sendBeacon 原本存在的理由，所以不需要兩個並存。
   try{fetch(TRACK_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
     body:JSON.stringify(body),keepalive:true}).catch(function(){});}catch(e){}
 }
