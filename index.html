@@ -593,6 +593,7 @@ track('page_view',{});
 /* ---- 狀態 ---- */
 let state='start',items=[],bursts=[],pops=[],ripples=[],rain=[],critters=[];
 let timeLeft=DURATION,mine=0,theirs=0,animalTaps=0,guyTaps=0,combo=0,best=0;
+let animalTally={fish:0,crab:0,egret:0};   // 各類動物被點的次數，賞鳥彩蛋的觀察記錄用
 let heardLines={};
 let lastT=0,spawnAcc=0,cdT=0,speedMul=.35,revealT=0,startedAt=0;
 let evtTimer=8,windT=0,rainT=0;
@@ -601,6 +602,7 @@ let picked={},missedAll=[],missedCount=0;
 function reset(){
   items=[];bursts=[];pops=[];ripples=[];rain=[];critters=[];
   timeLeft=DURATION;mine=0;theirs=0;animalTaps=0;guyTaps=0;combo=0;heardLines={};
+  animalTally={fish:0,crab:0,egret:0};
   spawnAcc=0;cdT=0;speedMul=.35;revealT=0;evtTimer=8;windT=0;rainT=0;
   missedAll=[];missedCount=0;picked={};
   Object.keys(ALL).forEach(k=>picked[k]=0);
@@ -870,7 +872,8 @@ function tap(e){
     const c=critters[i];
     if(Math.hypot(c.x-x,c.y-y)<c.c.hit){
       critters.splice(i,1);
-      animalTaps++;combo=0;timeLeft=Math.max(0,timeLeft-1);
+      animalTaps++;animalTally[c.c.k]=(animalTally[c.c.k]||0)+1;
+      combo=0;timeLeft=Math.max(0,timeLeft-1);
       AudioKit.animal();hint('那是'+c.c.name+'，不是垃圾　−1 秒',true);updateHUD();return;}
   }
   for(let i=items.length-1;i>=0;i--){
@@ -1176,7 +1179,103 @@ function makeShareImage(mine,missedCount,cb){
   c.toBlob(function(b){cb(b);},'image/png');
 }
 
+/* ---- 賞鳥彩蛋專屬分享圖：假證書外框 + 生態觀察記錄 ---- */
+function makeEggShareImage(mine,animalTaps,tally,cb){
+  const w=1080,h=1200,c=document.createElement('canvas');
+  c.width=w;c.height=h;const g=c.getContext('2d');
+
+  // 米黃證書底
+  const bg=g.createLinearGradient(0,0,0,h);
+  bg.addColorStop(0,'#FDF8EC');bg.addColorStop(1,'#F5EDD9');
+  g.fillStyle=bg;g.fillRect(0,0,w,h);
+
+  // 雙層金框
+  g.strokeStyle='#C9A227';g.lineWidth=10;g.strokeRect(38,38,w-76,h-76);
+  g.strokeStyle='#E0C56A';g.lineWidth=3;g.strokeRect(58,58,w-116,h-116);
+  // 四角裝飾
+  [[58,58,1,1],[w-58,58,-1,1],[58,h-58,1,-1],[w-58,h-58,-1,-1]].forEach(a=>{
+    g.strokeStyle='#C9A227';g.lineWidth=5;g.beginPath();
+    g.moveTo(a[0]+a[2]*36,a[1]);g.lineTo(a[0],a[1]);g.lineTo(a[0],a[1]+a[3]*36);g.stroke();
+  });
+
+  g.textAlign='center';
+  g.fillStyle='#8A6D1F';g.font='700 28px "Noto Sans TC",sans-serif';
+  g.fillText('荒野保護協會台中分會',w/2,142);
+  g.strokeStyle='#C9A227';g.lineWidth=2;
+  g.beginPath();g.moveTo(w/2-150,168);g.lineTo(w/2+150,168);g.stroke();
+
+  g.fillStyle='#6B4E12';g.font='900 88px "Noto Serif TC",serif';
+  g.fillText('賞鳥大師認證',w/2,266);
+
+  g.fillStyle='#7A6535';g.font='400 30px "Noto Sans TC",sans-serif';
+  g.fillText('茲證明本人於 60 秒淨溪挑戰期間',w/2,330);
+  g.fillText('展現優異之野生動物觀察力',w/2,374);
+
+  // 觀察記錄清單
+  const boxX=140,boxY=420,boxW=w-280,boxH=330;
+  g.fillStyle='rgba(255,255,255,.75)';g.fillRect(boxX,boxY,boxW,boxH);
+  g.strokeStyle='#DCC98A';g.lineWidth=2;g.strokeRect(boxX,boxY,boxW,boxH);
+  g.fillStyle='#8A6D1F';g.font='700 24px "Noto Sans TC",sans-serif';
+  g.textAlign='left';g.fillText('野 外 觀 察 記 錄',boxX+34,boxY+52);
+  g.strokeStyle='#E6D8AA';g.lineWidth=1;
+  g.beginPath();g.moveTo(boxX+34,boxY+70);g.lineTo(boxX+boxW-34,boxY+70);g.stroke();
+
+  // 用遊戲既有的向量圖形畫動物
+  const real=ctx;ctx=g;
+  const rows=[['fish','魚',tally.fish],['crab','螃蟹',tally.crab],['egret','白鷺鷥',tally.egret]];
+  rows.forEach((r,i)=>{
+    const y=boxY+128+i*68;
+    // 白鷺鷥的圖形重心偏下（原本設計是站在河灘上），在清單裡要往下推一點才對齊
+    const oy=r[0]==='egret'?10:-8;
+    g.save();g.translate(boxX+72,y+oy);drawItem(r[0],r[0]==='egret'?54:54);g.restore();
+    g.fillStyle='#5A4A20';g.font='500 32px "Noto Sans TC",sans-serif';g.textAlign='left';
+    g.fillText(r[1],boxX+130,y+2);
+    g.fillStyle='#8A6D1F';g.font='700 34px "Space Mono",monospace';g.textAlign='right';
+    g.fillText(r[2]+' 次',boxX+boxW-40,y+2);
+  });
+  ctx=real;
+
+  g.textAlign='center';
+  g.fillStyle='#6B4E12';g.font='700 34px "Noto Sans TC",sans-serif';
+  g.fillText('總計驚擾 '+animalTaps+' 隻　撿起垃圾 '+mine+' 件',w/2,806);
+
+  // 印章
+  g.save();g.translate(w-215,880);g.rotate(-.14);
+  g.strokeStyle='#C0392B';g.lineWidth=5;g.strokeRect(-72,-52,144,104);
+  g.fillStyle='#C0392B';g.font='900 34px "Noto Serif TC",serif';g.textAlign='center';
+  g.fillText('觀察',0,-6);g.fillText('達人',0,36);
+  g.restore();
+
+  g.fillStyle='#7A6535';g.font='400 29px "Noto Sans TC",sans-serif';g.textAlign='left';
+  g.fillText('備註：本次未進行任何有效淨溪行為。',110,900);
+  g.fillStyle='#B0392B';g.font='700 31px "Noto Sans TC",sans-serif';
+  g.fillText('下次來，換撿垃圾試試？',110,948);
+
+  // 網址膠囊（沿用主圖同樣做法，中文與網址分開畫避免缺字）
+  const zhLabel='換你來挑戰：',urlOnly=GAME_URL.replace(/^https?:\/\//,'').replace(/\/$/,'');
+  const fZh='700 30px "Noto Sans TC",sans-serif',fUrl='700 30px "Space Mono",monospace';
+  g.font=fZh;const zhW=g.measureText(zhLabel).width;
+  g.font=fUrl;const urlW=g.measureText(urlOnly).width;
+  const gapPad=2,padX=28,capW=zhW+urlW+gapPad+padX*2,capH=64;
+  const capX=(w-capW)/2,capY=1040,r=capH/2;
+  g.fillStyle='#8A6D1F';
+  g.beginPath();
+  g.moveTo(capX+r,capY);g.lineTo(capX+capW-r,capY);
+  g.arc(capX+capW-r,capY+r,r,-Math.PI/2,Math.PI/2);
+  g.lineTo(capX+r,capY+capH);
+  g.arc(capX+r,capY+r,r,Math.PI/2,-Math.PI/2);
+  g.fill();
+  g.textAlign='left';g.textBaseline='middle';g.fillStyle='#FFFFFF';
+  let tx=capX+padX;
+  g.font=fZh;g.fillText(zhLabel,tx,capY+r+1);tx+=zhW+gapPad;
+  g.font=fUrl;g.fillText(urlOnly,tx,capY+r+1);
+  g.textAlign='center';g.textBaseline='alphabetic';
+
+  c.toBlob(function(b){cb(b);},'image/png');
+}
+
 let inviteText='';   // 邀請朋友的文字，含這一場成績，於結算時組成
+let eggBird=false;   // 這一場是否觸發賞鳥彩蛋，決定分享圖與文案走哪一版
 /* ---- 向後台查「贏過多少百分比的玩家」 ----
    用 JSONP（動態插入 script）避開跨網域限制。
    查不到或逾時就維持原本的「本機最佳」顯示，不影響遊戲。 */
@@ -1191,7 +1290,7 @@ function loadRank(myScore,bestLocal){
     if(sc.parentNode)sc.parentNode.removeChild(sc);
     clearTimeout(timer);
     if(!d||typeof d.beat!=='number'||!d.plays)return;   // 沒資料就維持本機最佳
-    el.textContent='你贏過 '+d.beat+'% 的玩家　全站最佳 '+d.best+' 件';
+    el.textContent='你贏過 '+d.beat+'% 的玩家　最高紀錄 '+d.best+' 件';
   };
   window[cb]=finish;
   const timer=setTimeout(function(){finish(null);},6000);
@@ -1205,6 +1304,7 @@ function showResult(){
   state='result';document.body.classList.remove('playing');audioBtns.hidden=true;
   best=Math.max(best,mine);
   const egg=animalTaps>mine&&animalTaps>=3;
+  eggBird=egg;
   const heardCount=Object.keys(heardLines).length;
   const eggG=guyTaps>0;
 
@@ -1225,6 +1325,7 @@ function showResult(){
 
   const eggCard=document.getElementById('eggCard');
   eggCard.hidden=!egg;
+  document.getElementById('btnShare').textContent=egg?'分享我的賞鳥大師認證':'分享我的成績';
   if(egg)document.getElementById('eggBody').textContent=
     '你點到魚、螃蟹和白鷺鷥共 '+animalTaps+' 次，比撿起來的垃圾還多。你觀察力超強，根本是賞鳥大師，但旁邊很多垃圾，有沒有考慮撿一下？';
 
@@ -1251,8 +1352,12 @@ function showResult(){
     setTimeout(()=>el.style.width=el.dataset.w+'%',80+i*55)));
 
 
-  inviteText='我在《60 秒筏子溪淨溪挑戰》撿了 '+mine+' 件垃圾，漏掉 '+missedCount+' 件。\n\n'+
-    '換你來挑戰： '+GAME_URL;
+  inviteText=egg
+    ? ('我在《60 秒筏子溪淨溪挑戰》忙著賞鳥，驚擾了 '+animalTaps+' 隻動物，'+
+       '只撿到 '+mine+' 件垃圾，光榮取得「賞鳥大師認證」。\n\n'+
+       '你應該撿得比我多吧？來證明看看：'+GAME_URL)
+    : ('我在《60 秒筏子溪淨溪挑戰》撿了 '+mine+' 件垃圾，漏掉 '+missedCount+' 件。\n\n'+
+       '換你來挑戰： '+GAME_URL);
 
   const byType={};Object.keys(picked).forEach(k=>{if(picked[k])byType[ALL[k].name]=picked[k];});
   track('game_end',{picked:mine,missed:missedCount,thrown:theirs,
@@ -1312,15 +1417,19 @@ document.getElementById('btnAgain').addEventListener('click',startGame);
 document.getElementById('btnFb').addEventListener('click',()=>track('click_fb',{}));
 document.getElementById('btnShare').addEventListener('click',async function(){
   const b=this;track('click_share',{picked:mine});
-  const orig='分享我的成績';
-  b.textContent='產生分享圖…';
+  const orig=eggBird?'分享我的賞鳥大師認證':'分享我的成績';
+  b.textContent=eggBird?'製作認證書…':'產生分享圖…';
   try{
     const blob=await new Promise(res=>{
-      try{makeShareImage(mine,missedCount,res);}catch(e){res(null);}
+      try{
+        if(eggBird)makeEggShareImage(mine,animalTaps,animalTally,res);
+        else makeShareImage(mine,missedCount,res);
+      }catch(e){res(null);}
       setTimeout(()=>res(null),3000);
     });
     if(blob&&navigator.canShare){
-      const file=new File([blob],'淨溪挑戰成績.png',{type:'image/png'});
+      const fname=eggBird?'賞鳥大師認證.png':'淨溪挑戰成績.png';
+      const file=new File([blob],fname,{type:'image/png'});
       if(navigator.canShare({files:[file]})){
         // 只給圖，不帶文字：網址已經畫在圖裡了
         await navigator.share({files:[file]});
@@ -1330,9 +1439,9 @@ document.getElementById('btnShare').addEventListener('click',async function(){
     // 不支援圖片分享時，退而下載成績圖讓玩家自己貼
     if(blob){
       const url=URL.createObjectURL(blob),a=document.createElement('a');
-      a.href=url;a.download='淨溪挑戰成績.png';a.click();
+      a.href=url;a.download=eggBird?'賞鳥大師認證.png':'淨溪挑戰成績.png';a.click();
       setTimeout(()=>URL.revokeObjectURL(url),4000);
-      b.textContent='成績圖已下載 ✓';setTimeout(()=>b.textContent=orig,2400);return;
+      b.textContent=(eggBird?'認證書':'成績圖')+'已下載 ✓';setTimeout(()=>b.textContent=orig,2400);return;
     }
     b.textContent='產生失敗，請再試一次';setTimeout(()=>b.textContent=orig,2200);
   }catch(err){
