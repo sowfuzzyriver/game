@@ -224,6 +224,18 @@ body.is-mobile .mobile-only{display:block}
   text-align:center;letter-spacing:.04em}
 
 .credit{font-size:11.5px;color:var(--ink3);line-height:1.7;margin-top:18px;text-align:center}
+
+/* 圖片彈窗：內建瀏覽器擋掉原生分享時，讓玩家長按儲存 */
+.imgmodal{position:absolute;inset:0;z-index:8;background:rgba(10,35,32,.9);
+  display:flex;align-items:center;justify-content:center;padding:16px;
+  overflow-y:auto;-webkit-overflow-scrolling:touch}
+.imgmodal[hidden]{display:none}
+.im-inner{width:100%;max-width:340px;text-align:center}
+.im-tip{color:#fff;font-size:14.5px;font-weight:700;line-height:1.7;margin-bottom:10px}
+.im-pic{width:100%;border-radius:12px;display:block;box-shadow:0 8px 28px rgba(0,0,0,.45)}
+.im-url{margin-top:10px;font-family:var(--f-num);font-size:12px;color:#BFE3E7;
+  word-break:break-all;line-height:1.6}
+.im-close{margin-top:12px;background:rgba(255,255,255,.92)}
 .cta-wrap{margin-top:22px}
 /* 桌機：剩餘秒數／撿起／有人丟了 那排 HUD 放大 */
 @media (min-width:821px){
@@ -396,6 +408,15 @@ body.is-mobile .mobile-only{display:block}
     </div>
     <div class="credit">資料來源：荒野筏子溪平台　製圖：荒野保護協會台中分會<br>背景音樂：Cheer up (PSG Version) by Snabisch，CC BY 3.0，取自 OpenGameArt.org<br>這是宣導用小遊戲，真正的淨溪在河邊等你</div>
   </div>
+
+  <div class="imgmodal" id="imgModal" hidden>
+    <div class="im-inner">
+      <div class="im-tip" id="imTip">長按圖片 → 儲存到相簿，就能分享出去</div>
+      <img class="im-pic" id="imPic" alt="成績圖">
+      <div class="im-url" id="imUrl"></div>
+      <button class="btn ghost im-close" id="imClose">關閉</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -445,6 +466,9 @@ const LINES=['不然咧','我等一下會撿','風吹走的','就一個而已','
 
 // ---- 裝置偵測：桌機的垃圾/動物縮小，手機再放大一點；文字比照辦理 ----
 const IS_MOBILE=window.matchMedia('(max-width:820px)').matches||window.matchMedia('(pointer:coarse)').matches;
+// App 內建瀏覽器（LINE、FB、IG 等）常擋掉原生分享與下載，
+// 偵測到就改走「顯示圖片讓玩家長按儲存」的備援流程。
+const IS_INAPP=/\bLine\/|FBAN|FBAV|Instagram|MicroMessenger/i.test(navigator.userAgent);
 const OBJ_SCALE=IS_MOBILE?0.92:0.68;     // 上面 TYPES/SPAWNED/CRITTERS 的數值是以手機為基準微調的
 const TXT_SCALE=IS_MOBILE?1.05:1;        // 畫布內文字（GO、+1、揭曉標題等）
 document.body.classList.add(IS_MOBILE?'is-mobile':'is-desktop');
@@ -1176,7 +1200,8 @@ function makeShareImage(mine,missedCount,cb){
   g.font=fUrl;g.fillText(urlOnly,tx,capY+r+1);
   g.textAlign='center';g.textBaseline='alphabetic';
 
-  c.toBlob(function(b){cb(b);},'image/png');
+  const durl=c.toDataURL('image/png');
+  c.toBlob(function(b){cb(b,durl);},'image/png');
 }
 
 /* ---- 賞鳥彩蛋專屬分享圖：假證書外框 + 生態觀察記錄 ---- */
@@ -1271,7 +1296,8 @@ function makeEggShareImage(mine,animalTaps,tally,cb){
   g.font=fUrl;g.fillText(urlOnly,tx,capY+r+1);
   g.textAlign='center';g.textBaseline='alphabetic';
 
-  c.toBlob(function(b){cb(b);},'image/png');
+  const durl=c.toDataURL('image/png');
+  c.toBlob(function(b){cb(b,durl);},'image/png');
 }
 
 let inviteText='';   // 邀請朋友的文字，含這一場成績，於結算時組成
@@ -1415,42 +1441,76 @@ function showResult(){
 document.getElementById('btnStart').addEventListener('click',startGame);
 document.getElementById('btnAgain').addEventListener('click',startGame);
 document.getElementById('btnFb').addEventListener('click',()=>track('click_fb',{}));
+// 顯示圖片讓玩家長按儲存（LINE 等內建瀏覽器擋掉原生分享時的備援）
+function showImgModal(dataUrl){
+  const m=document.getElementById('imgModal');
+  const pic=document.getElementById('imPic');
+  pic.style.display='';           // 還原：文字模式會把圖片藏起來
+  pic.src=dataUrl;
+  document.getElementById('imTip').textContent=
+    (eggBird?'長按認證書':'長按成績圖')+' → 儲存到相簿，就能分享出去';
+  const box=document.getElementById('imUrl');
+  box.style.cssText='';           // 還原文字模式改過的樣式
+  box.textContent='遊戲網址已印在圖上：'+
+    GAME_URL.replace(/^https?:\/\//,'').replace(/\/$/,'');
+  m.hidden=false;
+}
+document.getElementById('imClose').addEventListener('click',function(){
+  document.getElementById('imgModal').hidden=true;
+});
+document.getElementById('imgModal').addEventListener('click',function(e){
+  if(e.target===this)this.hidden=true;   // 點背景也能關閉
+});
+
 document.getElementById('btnShare').addEventListener('click',async function(){
-  const b=this;track('click_share',{picked:mine});
+  const b=this;track('click_share',{picked:mine,inapp:IS_INAPP?1:0});
   const orig=eggBird?'分享我的賞鳥大師認證':'分享我的成績';
   b.textContent=eggBird?'製作認證書…':'產生分享圖…';
   try{
-    const blob=await new Promise(res=>{
+    const out=await new Promise(res=>{
       try{
-        if(eggBird)makeEggShareImage(mine,animalTaps,animalTally,res);
-        else makeShareImage(mine,missedCount,res);
+        const done=(blob,durl)=>res({blob:blob,durl:durl});
+        if(eggBird)makeEggShareImage(mine,animalTaps,animalTally,done);
+        else makeShareImage(mine,missedCount,done);
       }catch(e){res(null);}
       setTimeout(()=>res(null),3000);
     });
-    if(blob&&navigator.canShare){
+    if(!out||!out.durl){
+      b.textContent='產生失敗，請再試一次';setTimeout(()=>b.textContent=orig,2200);return;
+    }
+
+    // 第一層：原生分享（內建瀏覽器通常不支援夾帶檔案，會自動落到下一層）
+    if(!IS_INAPP&&out.blob&&navigator.canShare){
       const fname=eggBird?'賞鳥大師認證.png':'淨溪挑戰成績.png';
-      const file=new File([blob],fname,{type:'image/png'});
+      const file=new File([out.blob],fname,{type:'image/png'});
       if(navigator.canShare({files:[file]})){
-        // 只給圖，不帶文字：網址已經畫在圖裡了
-        await navigator.share({files:[file]});
+        await navigator.share({files:[file]});   // 網址已畫在圖裡，不另外帶文字
         b.textContent=orig;return;
       }
     }
-    // 不支援圖片分享時，退而下載成績圖讓玩家自己貼
-    if(blob){
-      const url=URL.createObjectURL(blob),a=document.createElement('a');
+
+    // 第二層：手機（含 LINE 等內建瀏覽器）顯示圖片，長按儲存
+    if(IS_MOBILE){
+      showImgModal(out.durl);
+      track('share_longpress',{});
+      b.textContent=orig;return;
+    }
+
+    // 第三層：桌機直接下載
+    if(out.blob){
+      const url=URL.createObjectURL(out.blob),a=document.createElement('a');
       a.href=url;a.download=eggBird?'賞鳥大師認證.png':'淨溪挑戰成績.png';a.click();
       setTimeout(()=>URL.revokeObjectURL(url),4000);
       b.textContent=(eggBird?'認證書':'成績圖')+'已下載 ✓';setTimeout(()=>b.textContent=orig,2400);return;
     }
-    b.textContent='產生失敗，請再試一次';setTimeout(()=>b.textContent=orig,2200);
+    showImgModal(out.durl);b.textContent=orig;
   }catch(err){
     if(err&&err.name==='AbortError'){b.textContent=orig;return;}   // 使用者自己取消分享
     b.textContent='分享失敗，請再試一次';setTimeout(()=>b.textContent=orig,2200);
   }
 });
 document.getElementById('btnInvite').addEventListener('click',async function(){
-  const b=this;track('click_invite',{picked:mine});
+  const b=this;track('click_invite',{picked:mine,inapp:IS_INAPP?1:0});
   const orig='分享給朋友挑戰';
   try{
     // 網址寫在文字裡一起送，避免部分 App 只取 text、把 url 欄位丟掉
@@ -1462,9 +1522,25 @@ document.getElementById('btnInvite').addEventListener('click',async function(){
     b.textContent='已複製，貼上就能邀請 ✓';setTimeout(()=>b.textContent=orig,2400);
   }catch(err){
     if(err&&err.name==='AbortError'){b.textContent=orig;return;}
-    b.textContent='複製失敗，請長按選取';setTimeout(()=>b.textContent=orig,2200);
+    // 內建瀏覽器可能同時擋掉分享與剪貼簿，最後手段是把文字攤開讓玩家自己長按複製
+    showInviteText();
+    b.textContent=orig;
   }
 });
+
+// 把邀請文字顯示出來讓玩家長按選取（剪貼簿被擋時的最終備援）
+function showInviteText(){
+  const m=document.getElementById('imgModal');
+  document.getElementById('imPic').removeAttribute('src');
+  document.getElementById('imPic').style.display='none';
+  document.getElementById('imTip').textContent='長按下面文字 → 複製 → 貼到聊天室';
+  const box=document.getElementById('imUrl');
+  box.textContent=inviteText;
+  box.style.cssText='margin-top:12px;font-family:var(--f-body);font-size:14px;color:#fff;'+
+    'background:rgba(255,255,255,.12);padding:14px;border-radius:10px;text-align:left;'+
+    'white-space:pre-wrap;user-select:text;-webkit-user-select:text;line-height:1.8';
+  m.hidden=false;
+}
 document.getElementById('btnCopyUrl').addEventListener('click',async function(){
   const b=this;track('click_copy_url',{picked:mine});
   const orig='複製遊戲網址';
