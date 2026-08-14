@@ -134,6 +134,20 @@ body.is-mobile .mobile-only{display:block}
 .res-unit{font-size:16px;color:var(--ink2)}
 .ratio{font-family:var(--f-num);font-size:13px;color:var(--ink3);text-align:center;margin-top:9px}
 
+/* 往下滑引導 */
+.scroll-cue{display:block;width:100%;margin:16px 0 4px;border:0;cursor:pointer;
+  background:linear-gradient(140deg,#258895,#14606B);color:#fff;
+  border-radius:14px;padding:14px 16px;text-align:center;font-family:var(--f-body);
+  box-shadow:0 4px 14px rgba(30,127,140,.24);transition:transform .12s}
+.scroll-cue:active{transform:scale(.98)}
+.scroll-cue:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.sc-text{display:block;font-size:16.5px;font-weight:900;letter-spacing:.03em}
+.sc-sub{display:block;font-size:12.5px;color:#BFE3E7;margin-top:5px;line-height:1.6}
+.sc-arrow{display:block;font-size:20px;line-height:1;margin-top:7px;
+  animation:cueBounce 1.4s ease-in-out infinite}
+@keyframes cueBounce{0%,100%{transform:translateY(0);opacity:.75}50%{transform:translateY(5px);opacity:1}}
+.scroll-cue.gone{display:none}
+
 .card{margin-top:18px;border-radius:14px;padding:16px}
 .card.punch{background:linear-gradient(140deg,#258895,#14606B);color:#fff}
 .card.punch h3{font-family:var(--f-display);font-size:22px;font-weight:900;line-height:1.42}
@@ -187,6 +201,8 @@ body.is-mobile .mobile-only{display:block}
 /* 里程碑數字 */
 .milestone{margin:18px 0;background:#fff;border:1px solid var(--line);border-radius:14px;
   padding:16px 18px;box-shadow:0 3px 12px rgba(18,58,51,.06)}
+.ms-h{font-size:12px;letter-spacing:.12em;color:var(--grass);font-weight:700;
+  margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--line)}
 .ms-row{display:flex;align-items:baseline;gap:10px;padding:5px 0}
 .ms-n{font-family:var(--f-num);font-size:27px;font-weight:700;color:var(--deep);
   min-width:88px;text-align:right;letter-spacing:-.01em}
@@ -194,6 +210,8 @@ body.is-mobile .mobile-only{display:block}
 .ms-sum{margin-top:11px;padding-top:12px;border-top:1px dashed var(--line);
   font-size:15px;color:var(--ink2);text-align:center}
 .ms-sum b{font-family:var(--f-num);font-size:20px;color:var(--amber);font-weight:700}
+.ms-note{margin-top:9px;font-size:13px;line-height:1.75;color:var(--ink2);text-align:center}
+.ms-note b{color:var(--ink);font-weight:700}
 
 /* 提問引言 */
 .quote{margin:18px 0;text-align:center;font-size:14px;color:var(--ink2);line-height:2}
@@ -205,15 +223,6 @@ body.is-mobile .mobile-only{display:block}
   font-family:var(--f-display);font-weight:900;font-size:17px;color:var(--amber);
   text-align:center;letter-spacing:.04em}
 
-.tally{margin-top:20px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
-.tally-h{font-size:12px;letter-spacing:.12em;color:var(--grass);font-weight:700;margin-bottom:10px}
-.tally-row{display:flex;justify-content:space-between;font-size:14px;padding:5px 0;color:var(--ink2);
-  border-bottom:1px dashed var(--line)}
-.tally-row:last-child{border-bottom:0}
-.tally-row span:last-child{font-family:var(--f-num);color:var(--ink)}
-.tally-note{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);
-  font-size:12.5px;line-height:1.7;color:var(--ink2)}
-.tally-note b{color:var(--ink);font-weight:700}
 .credit{font-size:11.5px;color:var(--ink3);line-height:1.7;margin-top:18px;text-align:center}
 .cta-wrap{margin-top:22px}
 /* 桌機：剩餘秒數／撿起／有人丟了 那排 HUD 放大 */
@@ -267,9 +276,8 @@ body.is-mobile .mobile-only{display:block}
   .quote{font-size:15px}
   .quote em{font-size:23px}
   .closing{font-size:18px}
-  .tally-h{font-size:13px}
-  .tally-row{font-size:15px}
-  .tally-note{font-size:14px}
+  .ms-h{font-size:13px}
+  .ms-note{font-size:14px}
   .credit{font-size:12.5px}
   .hud-label{font-size:11.5px}
   .hud-value{font-size:22px}
@@ -328,6 +336,12 @@ body.is-mobile .mobile-only{display:block}
       <div class="ratio" id="rRatio"></div>
     </div>
 
+    <button class="scroll-cue" id="scrollCue">
+      <span class="sc-text">往下滑，分享你的成績</span>
+      <span class="sc-sub">還有你剛剛撿的垃圾，在真實的筏子溪有多少</span>
+      <span class="sc-arrow">↓</span>
+    </button>
+
     <div class="card egg" id="eggCard" hidden>
       <h3>你觀察力超強，根本是來賞鳥的</h3>
       <p id="eggBody"></p>
@@ -355,10 +369,12 @@ body.is-mobile .mobile-only{display:block}
     <div class="fact">以高居榜首的<b>菸蒂</b>為例，濾嘴不是棉花，而是難以分解的塑膠——<b>醋酸纖維</b>。它不只會碎成微粒，還會殘留<b>尼古丁、焦油</b>等有害物質。</div>
 
     <div class="milestone">
+      <div class="ms-h">2019 年 6 月 – 2026 年 8 月 累計成果</div>
       <div class="ms-row"><span class="ms-n">7</span><span class="ms-u">年多的堅持</span></div>
       <div class="ms-row"><span class="ms-n">210</span><span class="ms-u">場以上的行動</span></div>
       <div class="ms-row"><span class="ms-n">14,118</span><span class="ms-u">人次的串聯</span></div>
       <div class="ms-sum">合力清除了 <b>23.92 公噸</b>的垃圾</div>
+      <div class="ms-note">相當於 <b>4 頭成年非洲象</b>、<b>16 台小客車</b>，或 <b>368 個成年人</b>的體重加起來。</div>
     </div>
 
     <div class="quote">但，一定會有人問：<br><em>「垃圾真的撿得完嗎？」</em></div>
@@ -367,14 +383,6 @@ body.is-mobile .mobile-only{display:block}
       <p>這些垃圾，都跟我們的日常行為有關。真正的解方不在於撿垃圾，而是<b>「源頭減量」與「重複使用」</b>。</p>
       <p>自備容器，重複使用，拒絕不需要的東西。<b>沒有被製造出來的垃圾，就不需要有人再去淨溪淨灘。</b></p>
       <span class="closing">改變，就從每一次的選擇開始。</span>
-    </div>
-
-    <div class="tally">
-      <div class="tally-h">2019 年 6 月 – 2026 年 8 月 累計成果</div>
-      <div class="tally-row"><span>執行場次</span><span>210 場</span></div>
-      <div class="tally-row"><span>累計重量</span><span>23.92 公噸</span></div>
-      <div class="tally-row"><span>淨溪人數</span><span>14,118 人次</span></div>
-      <div class="tally-note">23.92 公噸，相當於 <b>4 頭成年非洲象</b>、<b>16 台小客車</b>，或 <b>368 個成年人</b>的體重加起來。</div>
     </div>
 
     <div class="cta-wrap">
@@ -1230,7 +1238,24 @@ function showResult(){
     by_type:JSON.stringify(byType)});
 
   panelResult.hidden=false;panelResult.scrollTop=0;
+  document.getElementById('scrollCue').classList.remove('gone');
 }
+
+// 往下滑引導：點一下直接捲到分享按鈕，玩家自己滑動後就把提示收起來
+(function(){
+  const cue=document.getElementById('scrollCue');
+  cue.addEventListener('click',function(){
+    track('click_scroll_cue',{});
+    const target=document.querySelector('.cta-wrap');
+    if(target&&target.scrollIntoView){
+      target.scrollIntoView({behavior:REDUCED?'auto':'smooth',block:'center'});
+    }
+    cue.classList.add('gone');
+  });
+  panelResult.addEventListener('scroll',function(){
+    if(panelResult.scrollTop>60)cue.classList.add('gone');
+  },{passive:true});
+})();
 
 document.getElementById('btnStart').addEventListener('click',startGame);
 document.getElementById('btnAgain').addEventListener('click',startGame);
