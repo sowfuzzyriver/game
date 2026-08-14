@@ -557,13 +557,18 @@ let CITY='',COUNTRY='';
 })();
 
 let _evtSeq=0;
+const _lastSent={};
 function track(event,payload){
   if(!TRACK_URL)return;
+  // 行動瀏覽器的按鈕在觸控時可能同時觸發 click 與模擬滑鼠事件，
+  // 導致同一個動作送出兩次。這裡在來源端擋掉：同名事件在 3 秒內
+  // 只送第一次，之後的直接忽略。page_view 不受影響（只在載入時呼叫一次）。
+  const now=Date.now();
+  if(_lastSent[event]&&now-_lastSent[event]<3000)return;
+  _lastSent[event]=now;
+
   const body=Object.assign({
     event:event,session:SESSION,ts:new Date().toISOString(),
-    // 每筆事件的唯一識別碼：工作階段 + 流水號。
-    // mode:'no-cors' 看不到伺服器回應，瀏覽器有時會自動重送同一個請求，
-    // 造成同一個動作在試算表寫入兩筆。後台靠這個 ID 判斷重複並忽略。
     eid:SESSION+'-'+(++_evtSeq),
     device:DEVICE,
     region:TZ,
