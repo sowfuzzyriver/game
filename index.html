@@ -567,14 +567,11 @@ function track(event,payload){
     lang:navigator.language||'',
     ref:(function(){try{return document.referrer||'direct';}catch(e){return'direct';}})()
   },payload||{});
-  // sendBeacon 對 Google Apps Script 這種「先跳轉再處理」的網址不可靠：
-  // 它回傳 true 只代表瀏覽器排進背景傳送隊列，不代表真的送達伺服器，
-  // 尤其跳轉過程它常常不會乖乖跟著走。所以兩種方式都送，提高送達機率，
-  // 極少數兩個都成功只會多一筆重複紀錄，總比資料整批不見好。
-  try{
-    const blob=new Blob([JSON.stringify(body)],{type:'text/plain;charset=utf-8'});
-    if(navigator.sendBeacon)navigator.sendBeacon(TRACK_URL,blob);
-  }catch(e){}
+  // 只用 fetch，不再加上 sendBeacon：
+  // 上次同時使用兩者是因為懷疑 sendBeacon 對 Apps Script 這種「先跳轉再處理」
+  // 的網址不可靠，但實測後發現兩者其實都有送達，變成每個事件重複記錄兩筆。
+  // fetch 搭配 keepalive:true 本來就能在頁面關閉時繼續把請求送完，
+  // 涵蓋了 sendBeacon 原本存在的理由，所以不需要兩個並存。
   try{fetch(TRACK_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
     body:JSON.stringify(body),keepalive:true}).catch(function(){});}catch(e){}
 }
