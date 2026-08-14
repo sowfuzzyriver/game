@@ -1177,6 +1177,30 @@ function makeShareImage(mine,missedCount,cb){
 }
 
 let inviteText='';   // 邀請朋友的文字，含這一場成績，於結算時組成
+/* ---- 向後台查「贏過多少百分比的玩家」 ----
+   用 JSONP（動態插入 script）避開跨網域限制。
+   查不到或逾時就維持原本的「本機最佳」顯示，不影響遊戲。 */
+function loadRank(myScore,bestLocal){
+  if(!TRACK_URL)return;
+  const el=document.getElementById('rRatio');
+  const cb='rk_'+Date.now().toString(36);
+  let done=false;
+  const finish=function(d){
+    if(done)return;done=true;
+    try{delete window[cb];}catch(e){window[cb]=undefined;}
+    if(sc.parentNode)sc.parentNode.removeChild(sc);
+    clearTimeout(timer);
+    if(!d||typeof d.beat!=='number'||!d.plays)return;   // 沒資料就維持本機最佳
+    el.textContent='你贏過 '+d.beat+'% 的玩家　全站最佳 '+d.best+' 件';
+  };
+  window[cb]=finish;
+  const timer=setTimeout(function(){finish(null);},6000);
+  const sc=document.createElement('script');
+  sc.src=TRACK_URL+'?action=rank&score='+encodeURIComponent(myScore)+'&callback='+cb;
+  sc.onerror=function(){finish(null);};
+  document.head.appendChild(sc);
+}
+
 function showResult(){
   state='result';document.body.classList.remove('playing');audioBtns.hidden=true;
   best=Math.max(best,mine);
@@ -1237,14 +1261,22 @@ function showResult(){
     duration_sec:startedAt?Math.round((Date.now()-startedAt)/1000):0,
     by_type:JSON.stringify(byType)});
 
+  // 等成績寫進後台再查百分位，這一場才算得進去
+  setTimeout(function(){loadRank(mine,best);},1500);
+
   panelResult.hidden=false;panelResult.scrollTop=0;
   document.getElementById('scrollCue').classList.remove('gone');
+  if(panelResult._resetScrollLog)panelResult._resetScrollLog();
 }
 
-// 往下滑引導：點一下直接捲到分享按鈕，玩家自己滑動後就把提示收起來
+// 往下滑引導：點提示、自己滑動、滑到底，三種都各自記錄一次
 (function(){
   const cue=document.getElementById('scrollCue');
+  let cueClicked=false,scrolledLogged=false,reachedEnd=false;
+
   cue.addEventListener('click',function(){
+    if(cueClicked)return;
+    cueClicked=true;
     track('click_scroll_cue',{});
     const target=document.querySelector('.cta-wrap');
     if(target&&target.scrollIntoView){
@@ -1252,9 +1284,27 @@ function showResult(){
     }
     cue.classList.add('gone');
   });
+
   panelResult.addEventListener('scroll',function(){
-    if(panelResult.scrollTop>60)cue.classList.add('gone');
+    const top=panelResult.scrollTop;
+    if(top>60)cue.classList.add('gone');
+
+    // 玩家自己往下滑（不是點提示捲下去的），只記一次
+    if(!scrolledLogged&&!cueClicked&&top>60){
+      scrolledLogged=true;
+      track('scroll_manual',{});
+    }
+    // 滑到底部：代表把宣導內容看完了，這是最有價值的指標
+    if(!reachedEnd&&panelResult.scrollHeight-top-panelResult.clientHeight<120){
+      reachedEnd=true;
+      track('scroll_reach_end',{via:cueClicked?'cue':'manual'});
+    }
   },{passive:true});
+
+  // 每次進結果頁重置，這樣重玩第二場也會重新記錄
+  panelResult._resetScrollLog=function(){
+    cueClicked=false;scrolledLogged=false;reachedEnd=false;
+  };
 })();
 
 document.getElementById('btnStart').addEventListener('click',startGame);
