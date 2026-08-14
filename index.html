@@ -10,15 +10,15 @@
 <meta property="og:locale" content="zh_TW">
 <meta property="og:title" content="60 秒筏子溪淨溪挑戰">
 <meta property="og:description" content="垃圾正順著水流漂走。手指點下去，就把它撿起來，看你能救回多少。">
-<meta property="og:url" content="https://reurl.cc/k9XqqG">
-<meta property="og:image" content="https://reurl.cc/k9XqqG/share-card.png">
+<meta property="og:url" content="https://sowfuzzyriver.github.io/game/">
+<meta property="og:image" content="https://sowfuzzyriver.github.io/game/share-card.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="60 秒筏子溪淨溪挑戰，溪水中漂著寶特瓶、塑膠袋與菸蒂">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="60 秒筏子溪淨溪挑戰">
 <meta name="twitter:description" content="垃圾正順著水流漂走。手指點下去，就把它撿起來，看你能救回多少。">
-<meta name="twitter:image" content="https://reurl.cc/k9XqqG/share-card.png">
+<meta name="twitter:image" content="https://sowfuzzyriver.github.io/game/share-card.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@700;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
@@ -177,10 +177,33 @@ body.is-mobile .mobile-only{display:block}
 .bar-pct{width:52px;flex:0 0 52px;font-family:var(--f-num);color:var(--ink3);font-size:11.5px;
   text-align:right}
 
-.fact{border-left:3px solid var(--grass);padding:2px 0 2px 12px;margin-bottom:14px;
-  font-size:15px;line-height:1.8;color:var(--ink2)}
+.fact{border-left:3px solid var(--grass);padding:2px 0 2px 12px;margin-bottom:16px;
+  font-size:15px;line-height:1.9;color:var(--ink2)}
 .fact b{color:var(--ink);font-weight:700}
-.fact.key{border-left-color:var(--warn);background:#FFF8E8;padding:13px 14px;border-radius:0 10px 10px 0}
+.fact.key{border-left-color:var(--warn);background:#FFF8E8;padding:15px 16px;border-radius:0 10px 10px 0}
+.fact.key p{margin:0 0 14px}
+.fact.key p:last-of-type{margin-bottom:0}
+
+/* 里程碑數字 */
+.milestone{margin:18px 0;background:#fff;border:1px solid var(--line);border-radius:14px;
+  padding:16px 18px;box-shadow:0 3px 12px rgba(18,58,51,.06)}
+.ms-row{display:flex;align-items:baseline;gap:10px;padding:5px 0}
+.ms-n{font-family:var(--f-num);font-size:27px;font-weight:700;color:var(--deep);
+  min-width:88px;text-align:right;letter-spacing:-.01em}
+.ms-u{font-size:14.5px;color:var(--ink2)}
+.ms-sum{margin-top:11px;padding-top:12px;border-top:1px dashed var(--line);
+  font-size:15px;color:var(--ink2);text-align:center}
+.ms-sum b{font-family:var(--f-num);font-size:20px;color:var(--amber);font-weight:700}
+
+/* 提問引言 */
+.quote{margin:18px 0;text-align:center;font-size:14px;color:var(--ink2);line-height:2}
+.quote em{display:block;margin-top:4px;font-style:normal;font-family:var(--f-display);
+  font-weight:900;font-size:22px;color:var(--ink);letter-spacing:.02em}
+
+/* 結語 */
+.closing{display:block;margin-top:12px;padding-top:11px;border-top:1px solid rgba(240,160,7,.35);
+  font-family:var(--f-display);font-weight:900;font-size:17px;color:var(--amber);
+  text-align:center;letter-spacing:.04em}
 
 .tally{margin-top:20px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
 .tally-h{font-size:12px;letter-spacing:.12em;color:var(--grass);font-weight:700;margin-bottom:10px}
@@ -237,6 +260,13 @@ body.is-mobile .mobile-only{display:block}
   .bar-pct{font-size:12.5px}
   .bar-num{font-size:14px}
   .fact{font-size:16px}
+  .ms-n{font-size:29px;min-width:96px}
+  .ms-u{font-size:15.5px}
+  .ms-sum{font-size:16px}
+  .ms-sum b{font-size:21px}
+  .quote{font-size:15px}
+  .quote em{font-size:23px}
+  .closing{font-size:18px}
   .tally-h{font-size:13px}
   .tally-row{font-size:15px}
   .tally-note{font-size:14px}
@@ -321,9 +351,23 @@ body.is-mobile .mobile-only{display:block}
     <div id="realChart"></div>
 
     <div class="sec-h">說點正經的</div>
-    <div class="fact">菸蒂 <b>88,279 支、29.67%</b>，是第二名的兩倍多。它的濾嘴不是棉花，是醋酸纖維——一種塑膠，不會分解，只會碎成塑膠微粒。</div>
-    <div class="fact">第 2 到第 5 名全是一次性餐飲用品，<b>合計 44.25%</b>。遊戲裡塑膠袋會掉出東西、杯子分成三件，那不是亂編的，是真的很難撿。</div>
-    <div class="fact key">七年多、210 場、14,118 人次，撿回 23.92 公噸——溪裡的垃圾還是那麼多。因為<b>撿是末端，源頭減量與重複使用才是解方</b>。<br>自備杯袋餐具、選可重複填充的、修好再用、拒絕用不到的贈品、菸蒂隨身帶走。<b>沒有被製造出來的垃圾，才不需要有人蹲在河灘上撿。</b></div>
+    <div class="fact">這些不是遊戲裡的虛構數字，而是<b>河川裡真實撿到的垃圾</b>。它們不會憑空消失——塑膠垃圾經過時間、陽光、風雨，裂解成更小的<b>塑膠微粒</b>，無聲無息地滲透進水、空氣、土壤與環境中。</div>
+    <div class="fact">以高居榜首的<b>菸蒂</b>為例，濾嘴不是棉花，而是難以分解的塑膠——<b>醋酸纖維</b>。它不只會碎成微粒，還會殘留<b>尼古丁、焦油</b>等有害物質。</div>
+
+    <div class="milestone">
+      <div class="ms-row"><span class="ms-n">7</span><span class="ms-u">年多的堅持</span></div>
+      <div class="ms-row"><span class="ms-n">210</span><span class="ms-u">場以上的行動</span></div>
+      <div class="ms-row"><span class="ms-n">14,118</span><span class="ms-u">人次的串聯</span></div>
+      <div class="ms-sum">合力清除了 <b>23.92 公噸</b>的垃圾</div>
+    </div>
+
+    <div class="quote">但，一定會有人問：<br><em>「垃圾真的撿得完嗎？」</em></div>
+
+    <div class="fact key">
+      <p>這些垃圾，都跟我們的日常行為有關。真正的解方不在於撿垃圾，而是<b>「源頭減量」與「重複使用」</b>。</p>
+      <p>自備容器，重複使用，拒絕不需要的東西。<b>沒有被製造出來的垃圾，就不需要有人再去淨溪淨灘。</b></p>
+      <span class="closing">改變，就從每一次的選擇開始。</span>
+    </div>
 
     <div class="tally">
       <div class="tally-h">2019 年 6 月 – 2026 年 8 月 累計成果</div>
@@ -354,7 +398,7 @@ body.is-mobile .mobile-only{display:block}
    設定區：這兩行填好就生效
    ============================================================ */
 const BGM_URL='bgm.mp3';        // 背景音樂檔網址（留空 = 不放音樂）
-const TRACK_URL='https://script.google.com/macros/s/AKfycbw_Oy9CBUKEZc0RU8DMhhslqyPH1DCF0PsvZS43JKQlNcVtKaXyicHoDqv_hSXhj5sBfA/exec';      // Google Apps Script 網頁應用網址（留空 = 不追蹤）
+const TRACK_URL='https://script.google.com/macros/s/AKfycbwnNMi32vIcK_xuW8q6NECds2Dr7U22HK-eTACe3KL4U9s7QhSBHFf7GPXBMZafI5ZE/exec';      // Google Apps Script 網頁應用網址（留空 = 不追蹤）
 const GAME_URL='https://reurl.cc/k9XqqG';  // 遊戲本身的網址，會放進分享文案
 /* ============================================================ */
 
@@ -414,7 +458,7 @@ new ResizeObserver(fit).observe(cv);fit();
    音效：Web Audio 即時合成，零音檔零授權
    ============================================================ */
 const AudioKit=(function(){
-  let ac=null,sfxOn=true,bgm=null,bgmOn=true,rainSrc=null,rainGain=null;
+  let ac=null,sfxOn=true,bgm=null,bgmOn=true;
   function ctxOn(){
     if(!ac){try{ac=new (window.AudioContext||window.webkitAudioContext)();}catch(e){return null;}}
     if(ac.state==='suspended')ac.resume();
@@ -528,7 +572,7 @@ function track(event,payload){
     if(navigator.sendBeacon&&navigator.sendBeacon(TRACK_URL,blob))return;
   }catch(e){}
   try{fetch(TRACK_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},
-    body:JSON.stringify(body),keepalive:true});}catch(e){}
+    body:JSON.stringify(body),keepalive:true}).catch(function(){});}catch(e){}
 }
 track('page_view',{});
 
@@ -538,13 +582,13 @@ let timeLeft=DURATION,mine=0,theirs=0,animalTaps=0,guyTaps=0,combo=0,best=0;
 let heardLines={};
 let lastT=0,spawnAcc=0,cdT=0,speedMul=.35,revealT=0,startedAt=0;
 let evtTimer=8,windT=0,rainT=0;
-let picked={},missedAll=[],missedCount=0,missedG=0;
+let picked={},missedAll=[],missedCount=0;
 
 function reset(){
   items=[];bursts=[];pops=[];ripples=[];rain=[];critters=[];
   timeLeft=DURATION;mine=0;theirs=0;animalTaps=0;guyTaps=0;combo=0;heardLines={};
   spawnAcc=0;cdT=0;speedMul=.35;revealT=0;evtTimer=8;windT=0;rainT=0;
-  missedAll=[];missedCount=0;missedG=0;picked={};
+  missedAll=[];missedCount=0;picked={};
   Object.keys(ALL).forEach(k=>picked[k]=0);
   GUY.say='';GUY.sayT=0;GUY.arm=0;
 }
@@ -703,9 +747,10 @@ function drawItem(k,s){
       ctx.lineWidth=s*.075;ctx.strokeStyle='#FFFFFF';ctx.lineCap='round';
       ctx.beginPath();ctx.moveTo(s*.1,s*.02);ctx.quadraticCurveTo(s*.3,-s*.16,s*.24,-s*.42);ctx.stroke();
       ctx.fillStyle='#FFF';ctx.beginPath();ctx.arc(s*.24,-s*.46,s*.09,0,6.3);ctx.fill();
-      ctx.fillStyle='#F2B01E';ctx.beginPath();ctx.moveTo(s*.31,-s*.47);ctx.lineTo(s*.56,-s*.42);
-      ctx.lineTo(s*.31,-s*.4);ctx.closePath();ctx.fill();
-      ctx.fillStyle='#1B1B1B';ctx.beginPath();ctx.arc(s*.21,-s*.48,s*.026,0,6.3);ctx.fill();break;
+      ctx.fillStyle='#1B1B1B';ctx.beginPath();ctx.moveTo(s*.31,-s*.47);ctx.lineTo(s*.58,-s*.42);
+      ctx.lineTo(s*.31,-s*.39);ctx.closePath();ctx.fill();
+      ctx.fillStyle='#F2B01E';ctx.beginPath();ctx.arc(s*.2,-s*.44,s*.05,0,6.3);ctx.fill();
+      ctx.fillStyle='#1B1B1B';ctx.beginPath();ctx.arc(s*.21,-s*.48,s*.028,0,6.3);ctx.fill();break;
   }
 }
 
@@ -875,7 +920,7 @@ function loop(ts){
       }
     }
     if(it.x<-45||it.x>W+150||it.y>H+40){
-      if(it.x<-45){missedCount++;missedG+=(GRAM[it.def.k]||5);
+      if(it.x<-45){missedCount++;
         if(missedAll.length<80)missedAll.push({k:it.def.k,size:it.def.size,
           x:26+Math.random()*(W-52),y:it.y,d:Math.random()*6.3});}
       items.splice(i,1);continue;}
@@ -1050,7 +1095,7 @@ function startGame(){
 }
 function endPlay(){
   state='reveal';revealT=0;hud.hidden=true;audioBtns.hidden=true;AudioKit.pauseBgm();AudioKit.over();
-  items.forEach(it=>{missedCount++;missedG+=(GRAM[it.def.k]||5);
+  items.forEach(it=>{missedCount++;
     if(missedAll.length<80)missedAll.push({k:it.def.k,size:it.def.size,
       x:26+Math.random()*(W-52),y:Math.min(it.y,ZONE.playBot),d:Math.random()*6.3});});
   items=[];critters=[];
@@ -1137,8 +1182,7 @@ function showResult(){
      ? '垃圾漂得比你撿得快，而且撿起來還會分裂、掉蓋子、碎成好幾片。真正的淨溪也是這樣——你以為撿完了，蹲下去才發現底下還有一層。'
      : '你算是眼力好又手快的。實際在河灘上，這個數量大概要蹲上一小時，因為垃圾得一個一個撿。')
     +'　同一時間，岸上那個人丟了 '+theirs+' 件。';
-  document.getElementById('rRate').textContent=
-    '命中率 '+hitRate+'%　|　撿起約 '+kg(gotG)+'　漏掉約 '+kg(missedG);
+  document.getElementById('rRate').textContent='命中率 '+hitRate+'%';
   document.getElementById('rWeight').innerHTML=absurd(picked,gotG,mine,kg,bottles);
 
   const eggCard=document.getElementById('eggCard');
