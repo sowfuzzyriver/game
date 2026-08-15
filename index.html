@@ -147,6 +147,9 @@ body.is-mobile .mobile-only{display:block}
   animation:cueBounce 1.4s ease-in-out infinite}
 @keyframes cueBounce{0%,100%{transform:translateY(0);opacity:.75}50%{transform:translateY(5px);opacity:1}}
 .scroll-cue.gone{display:none}
+.scroll-cue.egg{background:linear-gradient(140deg,#C9A227,#8A6D1F);
+  box-shadow:0 4px 14px rgba(138,109,31,.3)}
+.scroll-cue.egg .sc-sub{color:#FBF0CE}
 
 .card{margin-top:18px;border-radius:14px;padding:16px}
 .card.punch{background:linear-gradient(140deg,#258895,#14606B);color:#fff}
@@ -349,8 +352,8 @@ body.is-mobile .mobile-only{display:block}
     </div>
 
     <button class="scroll-cue" id="scrollCue">
-      <span class="sc-text">往下滑，分享你的成績</span>
-      <span class="sc-sub">還有你剛剛撿的垃圾，在真實的筏子溪有多少</span>
+      <span class="sc-text" id="scText">往下滑，分享你的成績</span>
+      <span class="sc-sub" id="scSub">還有你剛剛撿的垃圾，在真實的筏子溪有多少</span>
       <span class="sc-arrow">↓</span>
     </button>
 
@@ -937,7 +940,7 @@ function loop(ts){
     const prog=Math.min((DURATION-timeLeft)/DURATION,1);
     speedMul=.35+prog*prog*1.15;
     spawnAcc+=dt;
-    const rate=1.05-prog*.40;
+    const rate=1.35-prog*.45;
     while(spawnAcc>rate){spawnAcc-=rate;
       Math.random()<.17?spawnCritter():spawnUpstream();}
     evtTimer-=dt;if(evtTimer<=0){fireEvent();evtTimer=11+Math.random()*4;}
@@ -1352,6 +1355,12 @@ function showResult(){
   const eggCard=document.getElementById('eggCard');
   eggCard.hidden=!egg;
   document.getElementById('btnShare').textContent=egg?'分享我的賞鳥大師認證':'分享我的成績';
+  // 拿到彩蛋的人，往下滑提示改成領證書，誘因更強
+  document.getElementById('scText').textContent=egg?'往下滑，領取你的賞鳥大師認證':'往下滑，分享你的成績';
+  document.getElementById('scSub').textContent=egg
+    ? '一張蓋了章的證書，記錄你驚擾了幾隻動物'
+    : '還有你剛剛撿的垃圾，在真實的筏子溪有多少';
+  document.getElementById('scrollCue').classList.toggle('egg',egg);
   if(egg)document.getElementById('eggBody').textContent=
     '你點到魚、螃蟹和白鷺鷥共 '+animalTaps+' 次，比撿起來的垃圾還多。你觀察力超強，根本是賞鳥大師，但旁邊很多垃圾，有沒有考慮撿一下？';
 
