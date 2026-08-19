@@ -591,14 +591,14 @@ let timeLeft=DURATION,mine=0,theirs=0,animalTaps=0,guyTaps=0,combo=0,best=0;
 let animalTally={fish:0,crab:0,egret:0};
 let heardLines={};
 let lastT=0,spawnAcc=0,cdT=0,speedMul=.35,revealT=0,startedAt=0;
-let evtTimer=15,windT=0,rainT=0;
+let evtTimer=13,windT=0,rainT=0;
 let picked={},missedAll=[],missedCount=0;
 
 function reset(){
   items=[];bursts=[];pops=[];ripples=[];rain=[];critters=[];
   timeLeft=DURATION;mine=0;theirs=0;animalTaps=0;guyTaps=0;combo=0;heardLines={};
   animalTally={fish:0,crab:0,egret:0};
-  spawnAcc=0;cdT=0;speedMul=.35;revealT=0;evtTimer=15;windT=0;rainT=0;
+  spawnAcc=0;cdT=0;speedMul=.35;revealT=0;evtTimer=13;windT=0;rainT=0;
   missedAll=[];missedCount=0;picked={};
   Object.keys(ALL).forEach(k=>picked[k]=0);
   GUY.say='';GUY.sayT=0;GUY.arm=0;
@@ -803,7 +803,7 @@ function consequence(it){
   const x=it.x,y=it.y;
 
   const prog=Math.min((DURATION-timeLeft)/DURATION,1);
-  const sp=0.45+0.55*prog;
+  const sp=0.55+0.45*prog;
   switch(it.def.k){
     case 'butt':
       if(Math.random()<.45*sp){burst(x,y,[ALL.butt,ALL.butt]);hint('旁邊還有兩支');}break;
@@ -908,7 +908,7 @@ function loop(ts){
     const prog=Math.min((DURATION-timeLeft)/DURATION,1);
     speedMul=.35+prog*prog*1.15;
     spawnAcc+=dt;
-    const rate=1.75-1.00*Math.pow(prog,1.4);
+    const rate=1.40-0.70*Math.pow(prog,1.5);
     while(spawnAcc>rate){spawnAcc-=rate;
       Math.random()<.17?spawnCritter():spawnUpstream();}
     evtTimer-=dt;if(evtTimer<=0){fireEvent();evtTimer=11+Math.random()*4;}
@@ -1090,8 +1090,8 @@ function startGame(){
   if(AudioKit.hasBgm()&&AudioKit.getBgm())AudioKit.setBgm(true);
   panelStart.hidden=true;panelResult.hidden=true;hud.hidden=false;audioBtns.hidden=false;
   document.body.classList.add('playing');
-  for(let i=0;i<2;i++){const d=pick();theirs++;
-    items.push(mk(d,W*(.45+i*.3),ZONE.waterTop+60+Math.random()*220));}
+  for(let i=0;i<3;i++){const d=pick();theirs++;
+    items.push(mk(d,W*(.35+i*.26),ZONE.waterTop+60+Math.random()*220));}
   lastBeep=99;state='countdown';
   track('game_start',{});
 }
