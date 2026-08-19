@@ -55,7 +55,6 @@ body.playing{overflow:hidden}
 }
 canvas{display:block;width:100%;height:100%;touch-action:none;-webkit-touch-callout:none}
 
-/* ---- HUD：壓扁、淡化、不擋畫面 ---- */
 .hud{position:absolute;inset:0 0 auto 0;display:flex;gap:5px;padding:8px;pointer-events:none;z-index:3}
 .hud-cell{flex:1;background:rgba(255,255,255,.82);backdrop-filter:blur(8px);
   border-radius:9px;padding:4px 6px;text-align:center;box-shadow:0 2px 8px rgba(18,58,51,.1)}
@@ -65,14 +64,12 @@ canvas{display:block;width:100%;height:100%;touch-action:none;-webkit-touch-call
 .hud-cell.theirs .hud-value{color:var(--alert)}
 .hud-cell.is-low .hud-value{color:var(--alert)}
 
-/* 音訊開關 */
 .audio-btns{position:absolute;right:8px;top:52px;z-index:4;display:flex;flex-direction:column;gap:5px}
 .abtn{width:30px;height:30px;border:0;border-radius:8px;cursor:pointer;
   background:rgba(255,255,255,.8);color:var(--ink2);font-size:15px;line-height:1;
   box-shadow:0 2px 6px rgba(18,58,51,.12)}
 .abtn.off{color:var(--ink3);opacity:.6}
 
-/* ---- 提示：事件在 HUD 下方，小提示在底部草地 ---- */
 .evt-toast{
   position:absolute;left:50%;top:30%;transform:translateX(-50%);
   background:#F0A007;color:#3A2600;font-weight:900;font-size:15px;
@@ -89,7 +86,6 @@ canvas{display:block;width:100%;height:100%;touch-action:none;-webkit-touch-call
 .evt-toast.show,.hint-toast.show{opacity:1}
 .hint-toast.bad{background:rgba(228,0,79,.72)}
 
-/* ---- 面板 ---- */
 .panel{position:absolute;inset:0;z-index:5;padding:24px 20px;overflow-y:auto;
   background:linear-gradient(168deg,#F0FAF4 0%,#DEF1F3 55%,#F6FBF7 100%);
   display:flex;flex-direction:column;-webkit-overflow-scrolling:touch}
@@ -127,14 +123,12 @@ body.is-desktop .desktop-only{display:block}
 body.is-mobile .btn-row.mobile-only{display:flex}
 body.is-mobile .mobile-only{display:block}
 
-/* ---- 結算 ---- */
 .res-top{text-align:center;padding-top:2px}
 .res-kicker{font-size:13px;letter-spacing:.2em;color:var(--grass);font-weight:700}
 .res-big{font-family:var(--f-num);font-size:68px;line-height:1;margin:6px 0 2px;color:var(--ink)}
 .res-unit{font-size:16px;color:var(--ink2)}
 .ratio{font-family:var(--f-num);font-size:13px;color:var(--ink3);text-align:center;margin-top:9px}
 
-/* 往下滑引導 */
 .scroll-cue{display:block;width:100%;margin:16px 0 4px;border:0;cursor:pointer;
   background:linear-gradient(140deg,#258895,#14606B);color:#fff;
   border-radius:14px;padding:14px 16px;text-align:center;font-family:var(--f-body);
@@ -171,13 +165,11 @@ body.is-mobile .mobile-only{display:block}
 .card.egg h3{font-family:var(--f-display);font-size:21px;font-weight:900;line-height:1.45}
 .card.egg p{font-size:15px;line-height:1.75;color:#D8F2E7;margin-top:8px}
 
-/* 撿到的東西：精簡標籤列 */
 .mine-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .mg{background:#fff;border:1px solid var(--line);border-radius:99px;padding:5px 11px;
   font-size:13.5px;color:var(--ink2);display:inline-flex;align-items:center;gap:6px}
 .mg b{font-family:var(--f-num);font-size:14.5px;color:var(--deep)}
 .mg.none{color:var(--ink3);border-style:dashed}
-
 
 .sec-h{font-size:13px;letter-spacing:.14em;color:var(--grass);font-weight:700;margin:24px 0 10px}
 .bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:13px}
@@ -201,7 +193,6 @@ body.is-mobile .mobile-only{display:block}
 .fact.key p{margin:0 0 14px}
 .fact.key p:last-of-type{margin-bottom:0}
 
-/* 里程碑數字 */
 .milestone{margin:18px 0;background:#fff;border:1px solid var(--line);border-radius:14px;
   padding:16px 18px;box-shadow:0 3px 12px rgba(18,58,51,.06)}
 .ms-h{font-size:12px;letter-spacing:.12em;color:var(--grass);font-weight:700;
@@ -216,19 +207,16 @@ body.is-mobile .mobile-only{display:block}
 .ms-note{margin-top:9px;font-size:13px;line-height:1.75;color:var(--ink2);text-align:center}
 .ms-note b{color:var(--ink);font-weight:700}
 
-/* 提問引言 */
 .quote{margin:18px 0;text-align:center;font-size:14px;color:var(--ink2);line-height:2}
 .quote em{display:block;margin-top:4px;font-style:normal;font-family:var(--f-display);
   font-weight:900;font-size:22px;color:var(--ink);letter-spacing:.02em}
 
-/* 結語 */
 .closing{display:block;margin-top:12px;padding-top:11px;border-top:1px solid rgba(240,160,7,.35);
   font-family:var(--f-display);font-weight:900;font-size:17px;color:var(--amber);
   text-align:center;letter-spacing:.04em}
 
 .credit{font-size:11.5px;color:var(--ink3);line-height:1.7;margin-top:18px;text-align:center}
 
-/* 圖片彈窗：內建瀏覽器擋掉原生分享時，讓玩家長按儲存 */
 .imgmodal{position:absolute;inset:0;z-index:8;background:rgba(10,35,32,.9);
   display:flex;align-items:center;justify-content:center;padding:16px;
   overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -240,15 +228,14 @@ body.is-mobile .mobile-only{display:block}
   word-break:break-all;line-height:1.6}
 .im-close{margin-top:12px;background:rgba(255,255,255,.92)}
 .cta-wrap{margin-top:22px}
-/* 桌機：剩餘秒數／撿起／有人丟了 那排 HUD 放大 */
+
 @media (min-width:821px){
   .hud{padding:12px}
   .hud-cell{padding:7px 10px;border-radius:11px}
   .hud-label{font-size:13px}
   .hud-value{font-size:28px}
 }
-/* 手機：文字整體再放大一輪（但第一頁字級收斂，避免擠壓或被裁切），
-   垃圾/動物尺寸已在 JS 用 OBJ_SCALE 調整 */
+
 @media (max-width:820px){
   .title{font-size:clamp(27px,7.6vw,36px)}
   .brand{font-size:11.5px}
@@ -323,7 +310,7 @@ body.is-mobile .mobile-only{display:block}
   <div class="evt-toast" id="evtToast"></div>
   <div class="hint-toast" id="hintToast"></div>
 
-  <!-- 開始 -->
+  
   <div class="panel" id="panelStart">
     <div class="eyebrow">筏子溪・台中</div>
     <h1 class="title">60 秒<br><em>淨溪挑戰</em></h1>
@@ -339,10 +326,10 @@ body.is-mobile .mobile-only{display:block}
     <div class="spacer"></div>
     <button class="btn" id="btnStart">開始淨溪</button>
     <div class="disclaim">遊戲情節純屬好玩，真實的筏子溪比較安靜。<br>
-      我們會紀錄遊玩統計，幫助改善遊戲，不會記錄您的個人資料。</div>
+      我們將紀錄遊玩統計，幫助改善遊戲，不含個人資訊。</div>
   </div>
 
-  <!-- 結算 -->
+  
   <div class="panel" id="panelResult" hidden>
     <div class="res-top">
       <div class="res-kicker">時間到</div>
@@ -426,18 +413,14 @@ body.is-mobile .mobile-only{display:block}
 (function(){
 'use strict';
 
-/* ============================================================
-   設定區：這兩行填好就生效
-   ============================================================ */
-const BGM_URL='bgm.mp3';        // 背景音樂檔網址（留空 = 不放音樂）
-const TRACK_URL='https://script.google.com/macros/s/AKfycbw_Oy9CBUKEZc0RU8DMhhslqyPH1DCF0PsvZS43JKQlNcVtKaXyicHoDqv_hSXhj5sBfA/exec';      // Google Apps Script 網頁應用網址（留空 = 不追蹤）
-const GAME_URL='https://lihi1.me/H0o6G';  // 遊戲本身的網址，會放進分享文案
-/* ============================================================ */
+const BGM_URL='bgm.mp3';
+const TRACK_URL='https://script.google.com/macros/s/AKfycbw_Oy9CBUKEZc0RU8DMhhslqyPH1DCF0PsvZS43JKQlNcVtKaXyicHoDqv_hSXhj5sBfA/exec';
+const GAME_URL='https://lihi1.me/H0o6G';
 
 const W=400,H=680,DURATION=60;
 const ZONE={waterTop:140,waterBot:430,gravelBot:565,playBot:640};
 const REDUCED=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const GUY={x:340,y:116,arm:0,say:'',sayT:0};   // 右上角那個人（在 HUD 下方、對岸草地上）
+const GUY={x:340,y:116,arm:0,say:'',sayT:0};
 
 const TYPES=[
  {k:'butt',   name:'菸蒂',             pct:29.67,real:88279,hit:34,size:31},
@@ -458,7 +441,7 @@ const SPAWNED={
   shard:{k:'shard',name:'玻璃碎片',hit:30,size:30},
   half: {k:'half', name:'半截吸管',hit:31,size:39}
 };
-// 各類垃圾的估算重量（公克），用來把件數換成看得懂的說法
+
 const GRAM={butt:.2,wrap:5,utensil:6,pet:25,bag:8,cup:12,straw:1,glass:400,can:15,other:15,
             cap:2,lid:3,film:.5,shard:130,half:.5};
 const ALL={};TYPES.forEach(t=>ALL[t.k]=t);Object.keys(SPAWNED).forEach(k=>ALL[k]=SPAWNED[k]);
@@ -467,19 +450,16 @@ const CRITTERS=[{k:'fish',name:'魚',hit:47,size:66},{k:'crab',name:'螃蟹',hit
                 {k:'egret',name:'白鷺鷥',hit:60,size:80}];
 const LINES=['不然咧','我等一下會撿','風吹走的','就一個而已','下面有人在撿啊','垃圾桶太遠了'];
 
-// ---- 裝置偵測：桌機的垃圾/動物縮小，手機再放大一點；文字比照辦理 ----
 const IS_MOBILE=window.matchMedia('(max-width:820px)').matches||window.matchMedia('(pointer:coarse)').matches;
-// App 內建瀏覽器（LINE、FB、IG 等）常擋掉原生分享與下載，
-// 偵測到就改走「顯示圖片讓玩家長按儲存」的備援流程。
+
 const IS_INAPP=/\bLine\/|FBAN|FBAV|Instagram|MicroMessenger/i.test(navigator.userAgent);
-const OBJ_SCALE=IS_MOBILE?0.92:0.68;     // 上面 TYPES/SPAWNED/CRITTERS 的數值是以手機為基準微調的
-const TXT_SCALE=IS_MOBILE?1.05:1;        // 畫布內文字（GO、+1、揭曉標題等）
+const OBJ_SCALE=IS_MOBILE?0.92:0.68;
+const TXT_SCALE=IS_MOBILE?1.05:1;
 document.body.classList.add(IS_MOBILE?'is-mobile':'is-desktop');
 [...TYPES,...Object.values(SPAWNED),...CRITTERS].forEach(t=>{
   t.hit=Math.round(t.hit*OBJ_SCALE);t.size=Math.round(t.size*OBJ_SCALE);
 });
 
-/* ---- DOM ---- */
 const cv=document.getElementById('cv');let ctx=cv.getContext('2d');
 const hud=document.getElementById('hud'),audioBtns=document.getElementById('audioBtns');
 const evtToast=document.getElementById('evtToast'),hintToast=document.getElementById('hintToast');
@@ -489,9 +469,6 @@ const panelStart=document.getElementById('panelStart'),panelResult=document.getE
 function fit(){const d=Math.min(window.devicePixelRatio||1,2);cv.width=W*d;cv.height=H*d;ctx.setTransform(d,0,0,d,0,0);}
 new ResizeObserver(fit).observe(cv);fit();
 
-/* ============================================================
-   音效：Web Audio 即時合成，零音檔零授權
-   ============================================================ */
 const AudioKit=(function(){
   let ac=null,sfxOn=true,bgm=null,bgmOn=true;
   function ctxOn(){
@@ -535,7 +512,7 @@ const AudioKit=(function(){
     },
     setBgm(v){bgmOn=v;if(!bgm)return;if(v){bgm.play().catch(()=>{});}else bgm.pause();},
     getBgm(){return bgmOn;},
-    pauseBgm(){if(bgm)bgm.pause();},   // 只是暫停播放，不動玩家的開關偏好，下次開始遊戲會照原本設定接著播
+    pauseBgm(){if(bgm)bgm.pause();},
     hasBgm(){return !!bgm;}
   };
 })();
@@ -547,12 +524,8 @@ if(!hasBgm)btnBgm.style.display='none';
 btnBgm.addEventListener('click',()=>{const v=!AudioKit.getBgm();AudioKit.setBgm(v);
   btnBgm.classList.toggle('off',!v);});
 
-/* ============================================================
-   後台追蹤：POST 到 Google Apps Script
-   ============================================================ */
 const SESSION=(Date.now().toString(36)+Math.random().toString(36).slice(2,8));
 
-// 裝置類型：細分到 iOS / Android / Windows / Mac / Linux，並區分手機、平板、電腦
 const DEVICE=(function(){
   const u=navigator.userAgent,p=navigator.platform||'';
   const touch=(navigator.maxTouchPoints||0)>1;
@@ -566,14 +539,12 @@ const DEVICE=(function(){
   return '其他';
 })();
 
-// 地區：先用瀏覽器時區（不需權限、不叫提示框），再向 IP 定位服務補上城市
 const TZ=(function(){
   try{return Intl.DateTimeFormat().resolvedOptions().timeZone||'unknown';}catch(e){return 'unknown';}
 })();
 let CITY='',COUNTRY='';
 (function lookupCity(){
-  // 依序嘗試，任何一個成功就停；全部失敗就只留時區，不影響遊戲
-  // 每個服務最多等 4 秒，避免對方沒回應時一路卡住
+
   const apis=['https://ipwho.is/','https://get.geojs.io/v1/ip/geo.json','https://ipapi.co/json/'];
   let i=0;
   (function next(){
@@ -595,9 +566,7 @@ let _evtSeq=0;
 const _lastSent={};
 function track(event,payload){
   if(!TRACK_URL)return;
-  // 行動瀏覽器的按鈕在觸控時可能同時觸發 click 與模擬滑鼠事件，
-  // 導致同一個動作送出兩次。這裡在來源端擋掉：同名事件在 3 秒內
-  // 只送第一次，之後的直接忽略。page_view 不受影響（只在載入時呼叫一次）。
+
   const now=Date.now();
   if(_lastSent[event]&&now-_lastSent[event]<3000)return;
   _lastSent[event]=now;
@@ -617,10 +586,9 @@ function track(event,payload){
 }
 track('page_view',{});
 
-/* ---- 狀態 ---- */
 let state='start',items=[],bursts=[],pops=[],ripples=[],rain=[],critters=[];
 let timeLeft=DURATION,mine=0,theirs=0,animalTaps=0,guyTaps=0,combo=0,best=0;
-let animalTally={fish:0,crab:0,egret:0};   // 各類動物被點的次數，賞鳥彩蛋的觀察記錄用
+let animalTally={fish:0,crab:0,egret:0};
 let heardLines={};
 let lastT=0,spawnAcc=0,cdT=0,speedMul=.35,revealT=0,startedAt=0;
 let evtTimer=8,windT=0,rainT=0;
@@ -636,7 +604,6 @@ function reset(){
   GUY.say='';GUY.sayT=0;GUY.arm=0;
 }
 
-/* ---- 場景 ---- */
 const gravel=[];for(let i=0;i<190;i++)gravel.push({x:Math.random()*W,
   y:ZONE.waterBot+Math.random()*(ZONE.gravelBot-ZONE.waterBot),r:1.2+Math.random()*3.4,g:Math.random()});
 function shade(hex,d){if(!d)return hex;const n=parseInt(hex.slice(1),16),m=1-d;
@@ -668,9 +635,8 @@ function drawScene(t){
     ctx.quadraticCurveTo(x+4,ZONE.gravelBot+18,x+(x%26?9:-9),ZONE.gravelBot+2);ctx.stroke();}
 }
 
-/* ---- 右下角那個人 ---- */
-const GUY_SCALE=IS_MOBILE?1.35:1;   // 手機的視覺與點擊判定都放大，桌機維持原尺寸
-const GUY_HIT=34*GUY_SCALE;         // 點擊判定半徑，之前放大垃圾/動物時漏掉了這個角色
+const GUY_SCALE=IS_MOBILE?1.35:1;
+const GUY_HIT=34*GUY_SCALE;
 function drawGuy(){
   ctx.save();ctx.translate(GUY.x,GUY.y);ctx.scale(GUY_SCALE,GUY_SCALE);
   ctx.fillStyle='rgba(18,58,51,.14)';ctx.beginPath();ctx.ellipse(0,22,16,5,0,0,6.3);ctx.fill();
@@ -692,7 +658,6 @@ function drawGuy(){
   }
 }
 
-/* ---- 繪圖工具 ---- */
 function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);
   ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
 function drawItem(k,s){
@@ -797,7 +762,6 @@ function drawItem(k,s){
   }
 }
 
-/* ---- 生成 ---- */
 function pick(){let r=Math.random()*TOTAL;for(const t of TYPES){r-=t.pct;if(r<=0)return t;}return TYPES[0];}
 function mk(def,x,y,o){o=o||{};
   return{def,x,y,vx:o.vx!==undefined?o.vx:-(1.4+Math.random()*.8),vy:o.vy||0,fly:!!o.fly,
@@ -808,7 +772,7 @@ function safeY(){
 }
 function spawnUpstream(){
   const def=pick();theirs++;
-  if(Math.random()<.45){          // 那個人親手丟進水裡
+  if(Math.random()<.45){
     GUY.arm=.5;
     items.push(mk(def,GUY.x-10,GUY.y-20,{fly:true,vx:-.9-Math.random()*1.4,vy:-1.1,
       targetY:ZONE.waterTop+40+Math.random()*(ZONE.waterBot-ZONE.waterTop-70)}));
@@ -823,7 +787,6 @@ function spawnCritter(){
   critters.push({c,x:W+40,y,vx:-(c.k==='egret'?.6:1.2),phase:Math.random()*6.3});
 }
 
-/* ---- 分裂：爆開動畫 ---- */
 function burst(x,y,defs){
   bursts.push({x,y,t:0});
   const n=defs.length;
@@ -865,7 +828,6 @@ function consequence(it){
   }
 }
 
-/* ---- 事件 ---- */
 function fireEvent(){
   const p=['rain','wind','fishes','bbq'],e=p[Math.floor(Math.random()*p.length)];
   if(e==='rain'){rainT=4.5;AudioKit.thunder();evt('☂ 午後雷陣雨　垃圾 +18');
@@ -878,14 +840,12 @@ function fireEvent(){
       items.push(mk(ALL.utensil,W+20+i*30,ZONE.waterBot+18+Math.random()*70,{vx:-.5-Math.random()*.5}));}}
 }
 
-/* ---- 提示 ---- */
 let hT=null,eT=null;
 function hint(msg,bad){hintToast.textContent=msg;hintToast.className='hint-toast show'+(bad?' bad':'');
   clearTimeout(hT);hT=setTimeout(()=>hintToast.classList.remove('show'),1000);}
 function evt(msg){evtToast.textContent=msg;evtToast.classList.add('show');
   clearTimeout(eT);eT=setTimeout(()=>evtToast.classList.remove('show'),1900);}
 
-/* ---- 互動 ---- */
 function pt(e){const r=cv.getBoundingClientRect(),p=e.changedTouches?e.changedTouches[0]:e;
   return{x:(p.clientX-r.left)*W/r.width,y:(p.clientY-r.top)*H/r.height};}
 function tap(e){
@@ -924,7 +884,6 @@ function updateHUD(){
   cellTime.classList.toggle('is-low',timeLeft<=10);
 }
 
-/* ---- 主迴圈 ---- */
 let lastBeep=99;
 function loop(ts){
   const dt=Math.min((ts-lastT)/1000||0,.05);lastT=ts;const t=ts/1000;
@@ -948,7 +907,6 @@ function loop(ts){
     updateHUD();
   }
 
-  // 垃圾
   for(let i=items.length-1;i>=0;i--){
     const it=items[i];
     if(it.scale<1)it.scale=Math.min(1,it.scale+dt*6);
@@ -973,7 +931,6 @@ function loop(ts){
     drawItem(it.def.k,it.def.size);ctx.restore();
   }
 
-  // 生物
   for(let i=critters.length-1;i>=0;i--){
     const c=critters[i];
     if(state==='play'){c.x+=c.vx*dt*60;c.y+=Math.sin(t*1.7+c.phase)*.35;}
@@ -983,7 +940,6 @@ function loop(ts){
 
   drawGuy();
 
-  // 爆開特效
   for(let i=bursts.length-1;i>=0;i--){
     const b=bursts[i];b.t+=dt;
     if(b.t>.4){bursts.splice(i,1);continue;}
@@ -994,7 +950,6 @@ function loop(ts){
     ctx.beginPath();ctx.arc(b.x,b.y,2+p*20,0,6.3);ctx.stroke();
   }
 
-  // 雨
   if(rainT>0){
     if(rain.length<80)for(let i=0;i<5;i++)rain.push({x:Math.random()*W,y:-10,v:9+Math.random()*7});
     ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=1.4;
@@ -1017,7 +972,6 @@ function loop(ts){
     ctx.font='700 '+Math.round(15*TXT_SCALE)+'px "Space Mono",monospace';ctx.textAlign='center';
     ctx.fillText('+1',p.x,p.y-14-p.t*24);ctx.globalAlpha=1;}
 
-  // 倒數
   if(state==='countdown'){
     cdT+=dt;const n=3-Math.floor(cdT),step=cdT%1;
     if(Math.floor(cdT)!==lastBeep){lastBeep=Math.floor(cdT);AudioKit.beep(n<=0);}
@@ -1034,7 +988,6 @@ function loop(ts){
     if(cdT>=3.6){state='play';lastT=ts;lastBeep=99;startedAt=Date.now();}
   }
 
-  // 揭曉：所有漏掉的垃圾
   if(state==='reveal'){
     revealT+=dt;
     ctx.fillStyle='rgba(14,48,44,'+Math.min(revealT/.5,1)*.78+')';ctx.fillRect(0,0,W,H);
@@ -1059,8 +1012,6 @@ function loop(ts){
 }
 requestAnimationFrame(loop);
 
-
-/* ---- 荒謬換算：把玩家撿到的東西講成看得懂的話 ---- */
 function len(cm){return cm>=100?(cm/100).toFixed(cm>=1000?0:1)+' 公尺':Math.round(cm)+' 公分';}
 function absurd(p,gotG,mine,kg,bottles){
   const L=[];
@@ -1107,7 +1058,6 @@ function absurd(p,gotG,mine,kg,bottles){
   const glass=(p.glass||0);
   add(glass,'玻璃瓶 '+glass+' 個','約 '+kg(glass*400)+'，一隻手提不太動','一個玻璃瓶約 500 公克。');
 
-  // 撿最多的三種
   L.sort((a,b)=>b.n-a.n);
   let html=L.slice(0,3).map(function(x){
     return '<div class="wl"><span class="src">'+x.src+'</span>'+
@@ -1126,7 +1076,6 @@ function absurd(p,gotG,mine,kg,bottles){
   return html;
 }
 
-/* ---- 流程 ---- */
 function startGame(){
   reset();updateHUD();AudioKit.unlock();
   if(AudioKit.hasBgm()&&AudioKit.getBgm())AudioKit.setBgm(true);
@@ -1144,11 +1093,11 @@ function endPlay(){
       x:26+Math.random()*(W-52),y:Math.min(it.y,ZONE.playBot),d:Math.random()*6.3});});
   items=[];critters=[];
 }
-/* ---- 產生成績分享圖（畫在離線畫布上，供手機原生分享附圖） ---- */
+
 function makeShareImage(mine,missedCount,cb){
   const w=1080,h=1200,c=document.createElement('canvas');
   c.width=w;c.height=h;const g=c.getContext('2d');
-  // 底：溪水漸層
+
   const bg=g.createLinearGradient(0,0,0,h);
   bg.addColorStop(0,'#EAF6F0');bg.addColorStop(.45,'#DCEFF2');bg.addColorStop(1,'#F4F9F6');
   g.fillStyle=bg;g.fillRect(0,0,w,h);
@@ -1161,7 +1110,7 @@ function makeShareImage(mine,missedCount,cb){
     for(let x=0;x<=w;x+=10)g.lineTo(x,430+i*62+Math.sin(x*.012+i)*7);g.stroke();}
   g.fillStyle='#DCD6C6';g.fillRect(0,720,w,88);
   g.fillStyle='#96C560';g.fillRect(0,808,w,h-808);
-  // 水面上的垃圾（暫時把繪圖環境切到離線畫布，重用遊戲既有的向量圖形）
+
   const real=ctx;ctx=g;
   [['pet',180,470,62,.3],['bag',420,430,60,-.2],['cup',700,500,56,.15],
    ['butt',300,640,34,.5],['wrap',880,450,58,.4],['butt',620,660,34,-.3],
@@ -1169,7 +1118,7 @@ function makeShareImage(mine,missedCount,cb){
     g.save();g.translate(a[1],a[2]);g.rotate(a[4]);drawItem(a[0],a[3]);g.restore();
   });
   ctx=real;
-  // 文字
+
   g.textAlign='center';
   g.fillStyle='#5E9B4A';g.font='900 30px "Noto Sans TC",sans-serif';
   g.fillText('荒野保護協會台中分會',w/2,110);
@@ -1182,8 +1131,6 @@ function makeShareImage(mine,missedCount,cb){
   g.fillStyle='#3E6B62';g.font='400 30px "Noto Sans TC",sans-serif';
   g.fillText('漏掉 '+missedCount+' 件',w/2,1024);
 
-  // 網址膠囊：畫進圖片本身，不管分享到哪個 App 都不會漏掉
-  // 中文和網址用不同字型分開畫，避免單一字型缺字變成方框
   const zhLabel='換你來挑戰：',urlOnly=GAME_URL.replace(/^https?:\/\//,'').replace(/\/$/,'');
   const fZh='700 30px "Noto Sans TC",sans-serif',fUrl='700 30px "Space Mono",monospace';
   g.font=fZh;const zhW=g.measureText(zhLabel).width;
@@ -1207,20 +1154,17 @@ function makeShareImage(mine,missedCount,cb){
   c.toBlob(function(b){cb(b,durl);},'image/png');
 }
 
-/* ---- 賞鳥彩蛋專屬分享圖：假證書外框 + 生態觀察記錄 ---- */
 function makeEggShareImage(mine,animalTaps,tally,cb){
   const w=1080,h=1200,c=document.createElement('canvas');
   c.width=w;c.height=h;const g=c.getContext('2d');
 
-  // 米黃證書底
   const bg=g.createLinearGradient(0,0,0,h);
   bg.addColorStop(0,'#FDF8EC');bg.addColorStop(1,'#F5EDD9');
   g.fillStyle=bg;g.fillRect(0,0,w,h);
 
-  // 雙層金框
   g.strokeStyle='#C9A227';g.lineWidth=10;g.strokeRect(38,38,w-76,h-76);
   g.strokeStyle='#E0C56A';g.lineWidth=3;g.strokeRect(58,58,w-116,h-116);
-  // 四角裝飾
+
   [[58,58,1,1],[w-58,58,-1,1],[58,h-58,1,-1],[w-58,h-58,-1,-1]].forEach(a=>{
     g.strokeStyle='#C9A227';g.lineWidth=5;g.beginPath();
     g.moveTo(a[0]+a[2]*36,a[1]);g.lineTo(a[0],a[1]);g.lineTo(a[0],a[1]+a[3]*36);g.stroke();
@@ -1239,7 +1183,6 @@ function makeEggShareImage(mine,animalTaps,tally,cb){
   g.fillText('茲證明本人於 60 秒淨溪挑戰期間',w/2,330);
   g.fillText('展現優異之野生動物觀察力',w/2,374);
 
-  // 觀察記錄清單
   const boxX=140,boxY=420,boxW=w-280,boxH=330;
   g.fillStyle='rgba(255,255,255,.75)';g.fillRect(boxX,boxY,boxW,boxH);
   g.strokeStyle='#DCC98A';g.lineWidth=2;g.strokeRect(boxX,boxY,boxW,boxH);
@@ -1248,12 +1191,11 @@ function makeEggShareImage(mine,animalTaps,tally,cb){
   g.strokeStyle='#E6D8AA';g.lineWidth=1;
   g.beginPath();g.moveTo(boxX+34,boxY+70);g.lineTo(boxX+boxW-34,boxY+70);g.stroke();
 
-  // 用遊戲既有的向量圖形畫動物
   const real=ctx;ctx=g;
   const rows=[['fish','魚',tally.fish],['crab','螃蟹',tally.crab],['egret','白鷺鷥',tally.egret]];
   rows.forEach((r,i)=>{
     const y=boxY+128+i*68;
-    // 白鷺鷥的圖形重心偏下（原本設計是站在河灘上），在清單裡要往下推一點才對齊
+
     const oy=r[0]==='egret'?10:-8;
     g.save();g.translate(boxX+72,y+oy);drawItem(r[0],r[0]==='egret'?54:54);g.restore();
     g.fillStyle='#5A4A20';g.font='500 32px "Noto Sans TC",sans-serif';g.textAlign='left';
@@ -1267,7 +1209,6 @@ function makeEggShareImage(mine,animalTaps,tally,cb){
   g.fillStyle='#6B4E12';g.font='700 34px "Noto Sans TC",sans-serif';
   g.fillText('總計驚擾 '+animalTaps+' 隻　撿起垃圾 '+mine+' 件',w/2,806);
 
-  // 印章
   g.save();g.translate(w-215,880);g.rotate(-.14);
   g.strokeStyle='#C0392B';g.lineWidth=5;g.strokeRect(-72,-52,144,104);
   g.fillStyle='#C0392B';g.font='900 34px "Noto Serif TC",serif';g.textAlign='center';
@@ -1279,7 +1220,6 @@ function makeEggShareImage(mine,animalTaps,tally,cb){
   g.fillStyle='#B0392B';g.font='700 31px "Noto Sans TC",sans-serif';
   g.fillText('下次來，換撿垃圾試試？',110,948);
 
-  // 網址膠囊（沿用主圖同樣做法，中文與網址分開畫避免缺字）
   const zhLabel='換你來挑戰：',urlOnly=GAME_URL.replace(/^https?:\/\//,'').replace(/\/$/,'');
   const fZh='700 30px "Noto Sans TC",sans-serif',fUrl='700 30px "Space Mono",monospace';
   g.font=fZh;const zhW=g.measureText(zhLabel).width;
@@ -1303,11 +1243,9 @@ function makeEggShareImage(mine,animalTaps,tally,cb){
   c.toBlob(function(b){cb(b,durl);},'image/png');
 }
 
-let inviteText='';   // 邀請朋友的文字，含這一場成績，於結算時組成
-let eggBird=false;   // 這一場是否觸發賞鳥彩蛋，決定分享圖與文案走哪一版
-/* ---- 向後台查「贏過多少百分比的玩家」 ----
-   用 JSONP（動態插入 script）避開跨網域限制。
-   查不到或逾時就維持原本的「本機最佳」顯示，不影響遊戲。 */
+let inviteText='';
+let eggBird=false;
+
 function loadRank(myScore,bestLocal){
   if(!TRACK_URL)return;
   const el=document.getElementById('rRatio');
@@ -1318,7 +1256,7 @@ function loadRank(myScore,bestLocal){
     try{delete window[cb];}catch(e){window[cb]=undefined;}
     if(sc.parentNode)sc.parentNode.removeChild(sc);
     clearTimeout(timer);
-    if(!d||typeof d.beat!=='number'||!d.plays)return;   // 沒資料就維持本機最佳
+    if(!d||typeof d.beat!=='number'||!d.plays)return;
     el.textContent='你贏過 '+d.beat+'% 的玩家　最高紀錄 '+d.best+' 件';
   };
   window[cb]=finish;
@@ -1355,7 +1293,7 @@ function showResult(){
   const eggCard=document.getElementById('eggCard');
   eggCard.hidden=!egg;
   document.getElementById('btnShare').textContent=egg?'分享我的賞鳥大師認證':'分享我的成績';
-  // 拿到彩蛋的人，往下滑提示改成領證書，誘因更強
+
   document.getElementById('scText').textContent=egg?'往下滑，領取你的賞鳥大師認證':'往下滑，分享你的成績';
   document.getElementById('scSub').textContent=egg
     ? '一張蓋了章的證書，記錄你驚擾了幾隻動物'
@@ -1363,9 +1301,6 @@ function showResult(){
   document.getElementById('scrollCue').classList.toggle('egg',egg);
   if(egg)document.getElementById('eggBody').textContent=
     '你點到魚、螃蟹和白鷺鷥共 '+animalTaps+' 次，比撿起來的垃圾還多。你觀察力超強，根本是賞鳥大師，但旁邊很多垃圾，有沒有考慮撿一下？';
-
-  // 小人彩蛋卡片：不在結果頁顯示給玩家，但 guyTaps / heardCount / eggG
-  // 還是照常計算，稍後一樣會送進 track('game_end', ...) 給後台統計。
 
   const grid=document.getElementById('mineGrid');
   const got=Object.keys(ALL).filter(k=>picked[k]>0).sort((a,b)=>picked[b]-picked[a]);
@@ -1386,7 +1321,6 @@ function showResult(){
   requestAnimationFrame(()=>chart.querySelectorAll('.bar-fill').forEach((el,i)=>
     setTimeout(()=>el.style.width=el.dataset.w+'%',80+i*55)));
 
-
   inviteText=egg
     ? ('我在《60 秒筏子溪淨溪挑戰》忙著賞鳥，驚擾了 '+animalTaps+' 隻動物，'+
        '只撿到 '+mine+' 件垃圾，光榮取得「賞鳥大師認證」。\n\n'+
@@ -1401,7 +1335,6 @@ function showResult(){
     duration_sec:startedAt?Math.round((Date.now()-startedAt)/1000):0,
     by_type:JSON.stringify(byType)});
 
-  // 等成績寫進後台再查百分位，這一場才算得進去
   setTimeout(function(){loadRank(mine,best);},1500);
 
   panelResult.hidden=false;panelResult.scrollTop=0;
@@ -1409,7 +1342,6 @@ function showResult(){
   if(panelResult._resetScrollLog)panelResult._resetScrollLog();
 }
 
-// 往下滑引導：點提示、自己滑動、滑到底，三種都各自記錄一次
 (function(){
   const cue=document.getElementById('scrollCue');
   let cueClicked=false,scrolledLogged=false,reachedEnd=false;
@@ -1429,19 +1361,17 @@ function showResult(){
     const top=panelResult.scrollTop;
     if(top>60)cue.classList.add('gone');
 
-    // 玩家自己往下滑（不是點提示捲下去的），只記一次
     if(!scrolledLogged&&!cueClicked&&top>60){
       scrolledLogged=true;
       track('scroll_manual',{});
     }
-    // 滑到底部：代表把宣導內容看完了，這是最有價值的指標
+
     if(!reachedEnd&&panelResult.scrollHeight-top-panelResult.clientHeight<120){
       reachedEnd=true;
       track('scroll_reach_end',{via:cueClicked?'cue':'manual'});
     }
   },{passive:true});
 
-  // 每次進結果頁重置，這樣重玩第二場也會重新記錄
   panelResult._resetScrollLog=function(){
     cueClicked=false;scrolledLogged=false;reachedEnd=false;
   };
@@ -1450,16 +1380,16 @@ function showResult(){
 document.getElementById('btnStart').addEventListener('click',startGame);
 document.getElementById('btnAgain').addEventListener('click',startGame);
 document.getElementById('btnFb').addEventListener('click',()=>track('click_fb',{}));
-// 顯示圖片讓玩家長按儲存（LINE 等內建瀏覽器擋掉原生分享時的備援）
+
 function showImgModal(dataUrl){
   const m=document.getElementById('imgModal');
   const pic=document.getElementById('imPic');
-  pic.style.display='';           // 還原：文字模式會把圖片藏起來
+  pic.style.display='';
   pic.src=dataUrl;
   document.getElementById('imTip').textContent=
     (eggBird?'長按認證書':'長按成績圖')+' → 儲存到相簿，就能分享出去';
   const box=document.getElementById('imUrl');
-  box.style.cssText='';           // 還原文字模式改過的樣式
+  box.style.cssText='';
   box.textContent='遊戲網址已印在圖上：'+
     GAME_URL.replace(/^https?:\/\//,'').replace(/\/$/,'');
   m.hidden=false;
@@ -1468,7 +1398,7 @@ document.getElementById('imClose').addEventListener('click',function(){
   document.getElementById('imgModal').hidden=true;
 });
 document.getElementById('imgModal').addEventListener('click',function(e){
-  if(e.target===this)this.hidden=true;   // 點背景也能關閉
+  if(e.target===this)this.hidden=true;
 });
 
 document.getElementById('btnShare').addEventListener('click',async function(){
@@ -1488,24 +1418,21 @@ document.getElementById('btnShare').addEventListener('click',async function(){
       b.textContent='產生失敗，請再試一次';setTimeout(()=>b.textContent=orig,2200);return;
     }
 
-    // 第一層：原生分享（內建瀏覽器通常不支援夾帶檔案，會自動落到下一層）
     if(!IS_INAPP&&out.blob&&navigator.canShare){
       const fname=eggBird?'賞鳥大師認證.png':'淨溪挑戰成績.png';
       const file=new File([out.blob],fname,{type:'image/png'});
       if(navigator.canShare({files:[file]})){
-        await navigator.share({files:[file]});   // 網址已畫在圖裡，不另外帶文字
+        await navigator.share({files:[file]});
         b.textContent=orig;return;
       }
     }
 
-    // 第二層：手機（含 LINE 等內建瀏覽器）顯示圖片，長按儲存
     if(IS_MOBILE){
       showImgModal(out.durl);
       track('share_longpress',{});
       b.textContent=orig;return;
     }
 
-    // 第三層：桌機直接下載
     if(out.blob){
       const url=URL.createObjectURL(out.blob),a=document.createElement('a');
       a.href=url;a.download=eggBird?'賞鳥大師認證.png':'淨溪挑戰成績.png';a.click();
@@ -1514,7 +1441,7 @@ document.getElementById('btnShare').addEventListener('click',async function(){
     }
     showImgModal(out.durl);b.textContent=orig;
   }catch(err){
-    if(err&&err.name==='AbortError'){b.textContent=orig;return;}   // 使用者自己取消分享
+    if(err&&err.name==='AbortError'){b.textContent=orig;return;}
     b.textContent='分享失敗，請再試一次';setTimeout(()=>b.textContent=orig,2200);
   }
 });
@@ -1522,7 +1449,7 @@ document.getElementById('btnInvite').addEventListener('click',async function(){
   const b=this;track('click_invite',{picked:mine,inapp:IS_INAPP?1:0});
   const orig='分享給朋友挑戰';
   try{
-    // 網址寫在文字裡一起送，避免部分 App 只取 text、把 url 欄位丟掉
+
     if(navigator.share){
       await navigator.share({text:inviteText});
       b.textContent=orig;return;
@@ -1531,13 +1458,12 @@ document.getElementById('btnInvite').addEventListener('click',async function(){
     b.textContent='已複製，貼上就能邀請 ✓';setTimeout(()=>b.textContent=orig,2400);
   }catch(err){
     if(err&&err.name==='AbortError'){b.textContent=orig;return;}
-    // 內建瀏覽器可能同時擋掉分享與剪貼簿，最後手段是把文字攤開讓玩家自己長按複製
+
     showInviteText();
     b.textContent=orig;
   }
 });
 
-// 把邀請文字顯示出來讓玩家長按選取（剪貼簿被擋時的最終備援）
 function showInviteText(){
   const m=document.getElementById('imgModal');
   document.getElementById('imPic').removeAttribute('src');
@@ -1554,7 +1480,7 @@ document.getElementById('btnCopyUrl').addEventListener('click',async function(){
   const b=this;track('click_copy_url',{picked:mine});
   const orig='複製遊戲網址';
   try{
-    await navigator.clipboard.writeText(inviteText);   // 與手機版邀請文字完全相同
+    await navigator.clipboard.writeText(inviteText);
     b.textContent='已複製，貼上就能邀請 ✓';setTimeout(()=>b.textContent=orig,2400);
   }catch(err){
     b.textContent='複製失敗，請手動選取網址';setTimeout(()=>b.textContent=orig,2200);
