@@ -400,6 +400,7 @@ body.is-mobile .mobile-only{display:block}
         <button class="btn ghost" id="btnShare">分享我的成績</button>
         <button class="btn ghost" id="btnInvite">分享給朋友挑戰</button>
       </div>
+      <button class="btn ghost desktop-only" id="btnDownload">下載成績圖</button>
       <button class="btn ghost desktop-only" id="btnCopyUrl">複製遊戲網址</button>
     </div>
     <div class="credit">資料來源：荒野筏子溪平台　製圖：荒野保護協會台中分會<br>背景音樂：Cheer up (PSG Version) by Snabisch，CC BY 3.0，取自 OpenGameArt.org<br>這是宣導用小遊戲，真正的淨溪在河邊等你</div>
@@ -427,7 +428,17 @@ const GAME_URL='https://lihi1.me/H0o6G';
 const W=400,H=680,DURATION=60;
 const ZONE={waterTop:140,waterBot:430,gravelBot:565,playBot:640};
 const REDUCED=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const GUY={x:340,y:116,arm:0,say:'',sayT:0};
+const GUY={x:340,y:116,arm:0,say:'',sayT:0,gone:0,fade:1};
+const GUY_TAPS_TO_BAN=5;
+const GUY_GONE_SEC=7;
+
+const BAN_LINES=[
+  ['🚨 有人檢舉他亂丟垃圾','他假裝沒事，先閃了'],
+  ['📢 巡守隊來了','他躲進草叢裡'],
+  ['😰 被你戳到心虛','他決定去別的地方丟'],
+  ['🚔 環保局的車經過','他跑了']
+];
+const BACK_LINES=['😒 他又回來了','🙄 風頭過了，他回來了','😑 他以為你忘了'];
 
 const TYPES=[
  {k:'butt',   name:'菸蒂',             pct:29.67,real:88279,hit:34,size:31},
@@ -594,7 +605,7 @@ function track(event,payload){
 track('page_view',{});
 
 let state='start',items=[],bursts=[],pops=[],ripples=[],rain=[],critters=[];
-let timeLeft=DURATION,mine=0,theirs=0,animalTaps=0,guyTaps=0,combo=0,best=0;
+let timeLeft=DURATION,mine=0,theirs=0,animalTaps=0,guyTaps=0,guyBans=0,combo=0,best=0;
 let animalTally={fish:0,crab:0,egret:0};
 let heardLines={};
 let lastT=0,spawnAcc=0,cdT=0,speedMul=.35,revealT=0,startedAt=0;
@@ -608,7 +619,7 @@ function reset(){
   spawnAcc=0;cdT=0;speedMul=.35;revealT=0;evtTimer=9;windT=0;rainT=0;
   missedAll=[];missedCount=0;picked={};
   Object.keys(ALL).forEach(k=>picked[k]=0);
-  GUY.say='';GUY.sayT=0;GUY.arm=0;
+  GUY.say='';GUY.sayT=0;GUY.arm=0;GUY.gone=0;GUY.fade=1;guyBans=0;
 }
 
 const gravel=[];for(let i=0;i<190;i++)gravel.push({x:Math.random()*W,
@@ -645,7 +656,9 @@ function drawScene(t){
 const GUY_SCALE=IS_MOBILE?1.35:1;
 const GUY_HIT=34*GUY_SCALE;
 function drawGuy(){
-  ctx.save();ctx.translate(GUY.x,GUY.y);ctx.scale(GUY_SCALE,GUY_SCALE);
+  if(GUY.fade<=0.02)return;
+  ctx.save();ctx.globalAlpha=GUY.fade;
+  ctx.translate(GUY.x,GUY.y);ctx.scale(GUY_SCALE,GUY_SCALE);
   ctx.fillStyle='rgba(18,58,51,.14)';ctx.beginPath();ctx.ellipse(0,22,16,5,0,0,6.3);ctx.fill();
   ctx.fillStyle='#3A4A2E';ctx.fillRect(-7,0,5,20);ctx.fillRect(3,0,5,20);
   ctx.fillStyle='#4A6FA5';ctx.beginPath();ctx.moveTo(-10,-22);ctx.lineTo(10,-22);
@@ -656,7 +669,7 @@ function drawGuy(){
   const a=-2.5+Math.sin(GUY.arm*6)*1.3*(GUY.arm>0?1:0);
   ctx.beginPath();ctx.moveTo(-6,-18);ctx.lineTo(-6+Math.cos(a)*15,-18+Math.sin(a)*15);ctx.stroke();
   ctx.restore();
-  if(GUY.sayT>0){
+  if(GUY.sayT>0&&GUY.fade>0.5){
     ctx.font='700 '+Math.round(12*TXT_SCALE)+'px "Noto Sans TC",sans-serif';ctx.textAlign='center';
     const w=ctx.measureText(GUY.say).width+18,bx=Math.min(GUY.x,W-w/2-6);
     ctx.fillStyle='rgba(255,255,255,.96)';rr(bx-w/2,GUY.y+26*GUY_SCALE,w,22,6);ctx.fill();
@@ -779,7 +792,7 @@ function safeY(){
 }
 function spawnUpstream(){
   const def=pick();theirs++;
-  if(Math.random()<.45){
+  if(GUY.gone<=0&&Math.random()<.45){
     GUY.arm=.5;
     items.push(mk(def,GUY.x-10,GUY.y-20,{fly:true,vx:-.9-Math.random()*1.4,vy:-1.1,
       targetY:ZONE.waterTop+40+Math.random()*(ZONE.waterBot-ZONE.waterTop-70)}));
@@ -868,9 +881,18 @@ function tap(e){
   if(state!=='play')return;
   e.preventDefault();AudioKit.unlock();
   const{x,y}=pt(e);ripples.push({x,y,t:0});
-  if(Math.hypot(GUY.x-x,GUY.y-y)<GUY_HIT){
+  if(GUY.gone<=0&&Math.hypot(GUY.x-x,GUY.y-y)<GUY_HIT){
+    guyTaps++;
+
+    if(guyTaps%GUY_TAPS_TO_BAN===0){
+      GUY.gone=GUY_GONE_SEC;GUY.say='';GUY.sayT=0;guyBans++;
+      const b=BAN_LINES[Math.floor(Math.random()*BAN_LINES.length)];
+      evt(b[0]+'　'+b[1]);
+      AudioKit.beep(true);
+      return;
+    }
     const li=Math.floor(Math.random()*LINES.length);
-    GUY.say=LINES[li];GUY.sayT=2;guyTaps++;heardLines[li]=1;return;}
+    GUY.say=LINES[li];GUY.sayT=2;heardLines[li]=1;return;}
   for(let i=critters.length-1;i>=0;i--){
     const c=critters[i];
     if(Math.hypot(c.x-x,c.y-y)<c.c.hit){
@@ -906,6 +928,16 @@ function loop(ts){
   drawScene(t);
   if(GUY.arm>0)GUY.arm=Math.max(0,GUY.arm-dt*1.6);
   if(GUY.sayT>0)GUY.sayT-=dt;
+  if(state==='play'&&GUY.gone>0){
+    GUY.gone-=dt;
+    if(GUY.gone<=0){
+      GUY.gone=0;GUY.fade=0;
+      evt(BACK_LINES[Math.floor(Math.random()*BACK_LINES.length)]);
+    }
+  }
+
+  const want=GUY.gone>0?0:1;
+  GUY.fade+=(want-GUY.fade)*Math.min(1,dt*(want?3:12));
 
   if(state==='play'){
     timeLeft-=dt;
@@ -1331,6 +1363,7 @@ function showResult(){
   const eggCard=document.getElementById('eggCard');
   eggCard.hidden=!egg;
   document.getElementById('btnShare').textContent=egg?'分享我的賞鳥大師認證':'分享我的成績';
+  document.getElementById('btnDownload').textContent=egg?'下載賞鳥大師認證':'下載成績圖';
 
   document.getElementById('scText').textContent=egg?'往下滑，領取你的賞鳥大師認證':'往下滑，分享你的成績';
   document.getElementById('scSub').textContent=egg
@@ -1369,7 +1402,7 @@ function showResult(){
   const byType={};Object.keys(picked).forEach(k=>{if(picked[k])byType[ALL[k].name]=picked[k];});
   track('game_end',{picked:mine,missed:missedCount,thrown:theirs,
     animal_taps:animalTaps,easter_egg:egg?1:0,
-    guy_taps:guyTaps,heard_lines:heardCount,easter_egg_guy:eggG?1:0,best:best,
+    guy_taps:guyTaps,guy_bans:guyBans,heard_lines:heardCount,easter_egg_guy:eggG?1:0,best:best,
     duration_sec:startedAt?Math.round((Date.now()-startedAt)/1000):0,
     by_type:JSON.stringify(byType)});
 
@@ -1542,6 +1575,44 @@ function showInviteText(){
     '-webkit-touch-callout:default;line-height:1.8';
   m.hidden=false;
 }
+document.getElementById('btnDownload').addEventListener('click',async function(){
+  const b=this;
+  const orig=eggBird?'下載賞鳥大師認證':'下載成績圖';
+  track('click_download',{picked:mine,egg:eggBird?1:0});
+  b.textContent=eggBird?'製作認證書…':'產生成績圖…';
+  try{
+    const out=await new Promise(res=>{
+      let settled=false,timer=null;
+      const done=(blob,durl)=>{
+        if(settled)return;settled=true;
+        if(timer)clearTimeout(timer);
+        res({blob:blob,durl:durl});
+      };
+      try{
+        if(eggBird)makeEggShareImage(mine,animalTaps,animalTally,done);
+        else makeShareImage(mine,missedCount,done);
+      }catch(e){ if(!settled){settled=true;res(null);} }
+      timer=setTimeout(()=>{if(!settled){settled=true;res(null);}},8000);
+    });
+    if(!out||(!out.blob&&!out.durl)){
+      track('share_img_fail',{reason:'desktop',inapp:0});
+      b.textContent='產生失敗，請再試一次';setTimeout(()=>b.textContent=orig,2400);return;
+    }
+    const fname=eggBird?'賞鳥大師認證.png':'淨溪挑戰成績.png';
+    const a=document.createElement('a');
+    if(out.blob){
+      const url=URL.createObjectURL(out.blob);
+      a.href=url;a.download=fname;a.click();
+      setTimeout(()=>URL.revokeObjectURL(url),4000);
+    }else{
+      a.href=out.durl;a.download=fname;a.click();
+    }
+    b.textContent=(eggBird?'認證書':'成績圖')+'已下載 ✓';setTimeout(()=>b.textContent=orig,2400);
+  }catch(err){
+    b.textContent='產生失敗，請再試一次';setTimeout(()=>b.textContent=orig,2400);
+  }
+});
+
 document.getElementById('btnCopyUrl').addEventListener('click',async function(){
   const b=this;track('click_copy_url',{picked:mine});
   const orig='複製遊戲網址';
