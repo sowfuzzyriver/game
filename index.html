@@ -1599,15 +1599,33 @@ document.getElementById('btnDownload').addEventListener('click',async function()
       b.textContent='產生失敗，請再試一次';setTimeout(()=>b.textContent=orig,2400);return;
     }
     const fname=eggBird?'賞鳥大師認證.png':'淨溪挑戰成績.png';
-    const a=document.createElement('a');
-    if(out.blob){
-      const url=URL.createObjectURL(out.blob);
-      a.href=url;a.download=fname;a.click();
-      setTimeout(()=>URL.revokeObjectURL(url),4000);
+    let ok=false;
+    try{
+      const a=document.createElement('a');
+      a.download=fname;
+      a.style.display='none';
+      let url='';
+      if(out.blob){ url=URL.createObjectURL(out.blob); a.href=url; }
+      else { a.href=out.durl; }
+
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      if(url)setTimeout(()=>URL.revokeObjectURL(url),4000);
+      ok=true;
+    }catch(e){ ok=false; }
+
+    if(ok){
+      b.textContent=(eggBird?'認證書':'成績圖')+'已下載 ✓';setTimeout(()=>b.textContent=orig,2400);
     }else{
-      a.href=out.durl;a.download=fname;a.click();
+
+      track('share_img_fail',{reason:'download_blocked',inapp:0});
+      showImgModal(out.durl);
+      const tip=document.getElementById('imTip');
+      tip.hidden=false;
+      tip.textContent='在圖片上按右鍵 → 另存圖片';
+      b.textContent=orig;
     }
-    b.textContent=(eggBird?'認證書':'成績圖')+'已下載 ✓';setTimeout(()=>b.textContent=orig,2400);
   }catch(err){
     b.textContent='產生失敗，請再試一次';setTimeout(()=>b.textContent=orig,2400);
   }
